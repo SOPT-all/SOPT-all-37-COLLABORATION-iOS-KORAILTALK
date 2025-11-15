@@ -1,0 +1,2 @@
+# SOPT-all-37-COLLABORATION-iOS-KORAILTALK
+37기 DIVE SOPT 합동 세미나 모바일 앱 1조 코레일톡 아요 🚅
