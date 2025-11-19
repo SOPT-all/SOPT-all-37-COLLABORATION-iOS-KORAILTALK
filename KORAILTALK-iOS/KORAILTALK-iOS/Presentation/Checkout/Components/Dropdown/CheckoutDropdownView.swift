@@ -1,5 +1,5 @@
 //
-//  DropdownView.swift
+//  CheckoutDropdownView.swift
 //  KORAILTALK-iOS
 //
 //  Created by sun on 11/19/25.
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class DropdownView: UIView {
+final class CheckoutDropdownView: UIView {
 
     // MARK: - UI
 
@@ -129,8 +129,8 @@ final class DropdownView: UIView {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(
-            DropdownOptionCell.self,
-            forCellReuseIdentifier: DropdownOptionCell.reuseIdentifier
+            CheckoutDropdownOptionCell.self,
+            forCellReuseIdentifier: CheckoutDropdownOptionCell.reuseIdentifier
         )
         
         tableView.separatorInset = .zero
@@ -181,7 +181,7 @@ final class DropdownView: UIView {
 
 // MARK: - UITableViewDataSource
 
-extension DropdownView: UITableViewDataSource {
+extension CheckoutDropdownView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
@@ -191,9 +191,9 @@ extension DropdownView: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: DropdownOptionCell.reuseIdentifier,
+            withIdentifier: CheckoutDropdownOptionCell.reuseIdentifier,
             for: indexPath
-        ) as? DropdownOptionCell else {
+        ) as? CheckoutDropdownOptionCell else {
             return UITableViewCell()
         }
         
@@ -206,7 +206,7 @@ extension DropdownView: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 
-extension DropdownView: UITableViewDelegate {
+extension CheckoutDropdownView: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath) {

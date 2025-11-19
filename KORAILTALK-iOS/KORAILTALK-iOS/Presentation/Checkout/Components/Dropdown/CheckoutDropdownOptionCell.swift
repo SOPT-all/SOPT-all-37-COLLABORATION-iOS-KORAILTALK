@@ -1,5 +1,5 @@
 //
-//  DropdownOptionCell.swift
+//  CheckoutDropdownOptionCell.swift
 //  KORAILTALK-iOS
 //
 //  Created by sun on 11/19/25.
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class DropdownOptionCell: UITableViewCell {
+final class CheckoutDropdownOptionCell: UITableViewCell {
 
     // MARK: - UI
     
