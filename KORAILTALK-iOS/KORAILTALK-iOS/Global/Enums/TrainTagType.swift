@@ -41,14 +41,14 @@ enum TrainTagType: String, CaseIterable {
     func style(isSelected: Bool) -> TrainTagTypeStyle {
         if isSelected {
             return TrainTagTypeStyle(
-                backgroundColor: .black,
-                titleColor: .white,
+                backgroundColor: .mainBlack,
+                titleColor: .mainWhite,
                 borderColor: nil
             )
         } else {
             return TrainTagTypeStyle(
-                backgroundColor: .white,
-                titleColor: .black,
+                backgroundColor: .mainWhite,
+                titleColor: .mainBlack,
                 borderColor: .gray200
             )
         }
