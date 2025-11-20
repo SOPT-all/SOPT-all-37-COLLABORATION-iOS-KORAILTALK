@@ -7,9 +7,6 @@
 
 import UIKit
 
-import SnapKit
-import Then
-
 final class TrainNameLabel: UILabel {
     
     let trainName: TrainNameType
@@ -21,9 +18,9 @@ final class TrainNameLabel: UILabel {
     
     private let padding = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
     
-    init(trainName: TrainNameType, isDisable: Bool = true) {
+    init(trainName: TrainNameType, isDisabled: Bool = true) {
         self.trainName = trainName
-        self.isDisabled = isDisable
+        self.isDisabled = isDisabled
         super.init(frame: .zero)
         self.setStyle()
     }
