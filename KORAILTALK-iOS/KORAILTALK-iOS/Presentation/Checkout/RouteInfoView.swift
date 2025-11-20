@@ -68,7 +68,7 @@ final class RouteInfoView: BaseView {
     ]).then {
         $0.axis = .horizontal
         $0.alignment = .center
-        $0.spacing = 67
+        $0.spacing = 58
         $0.distribution = .fill
     }
 
