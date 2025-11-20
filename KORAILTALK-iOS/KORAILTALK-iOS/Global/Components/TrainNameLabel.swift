@@ -13,13 +13,17 @@ import Then
 final class TrainNameLabel: UILabel {
     
     let trainName: TrainNameType
-    var isDisable: Bool
+    var isDisabled: Bool{
+        didSet {
+            self.setStyle()
+        }
+    }
     
     private let padding = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
     
     init(trainName: TrainNameType, isDisable: Bool = true) {
         self.trainName = trainName
-        self.isDisable = isDisable
+        self.isDisabled = isDisable
         super.init(frame: .zero)
         self.setStyle()
     }
@@ -42,7 +46,7 @@ final class TrainNameLabel: UILabel {
     
     func setStyle() {
         text = trainName.title
-        layer.backgroundColor = trainName.style(isDisable: isDisable).cgColor
+        layer.backgroundColor = trainName.backgroundColor(isDisabled: isDisabled).cgColor
         layer.cornerRadius = 4
         textAlignment = .center
         textColor = .mainWhite
