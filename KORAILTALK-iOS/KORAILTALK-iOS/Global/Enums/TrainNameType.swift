@@ -45,9 +45,9 @@ enum TrainNameType: String, CaseIterable {
     
     func style(isDisable: Bool) -> UIColor {
         if isDisable {
-            return self.backgroundColor
-        } else {
             return .gray200
+        } else {
+            return self.backgroundColor
         }
     }
 }
