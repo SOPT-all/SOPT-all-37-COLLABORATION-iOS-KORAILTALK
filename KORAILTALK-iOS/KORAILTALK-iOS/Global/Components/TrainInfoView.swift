@@ -12,9 +12,9 @@ import Then
 
 final class TrainInfoView: BaseView {
     
-    let trainName: TrainNameType
-    let trainNumber: String
-    let isDisabled: Bool
+    private let trainName: TrainNameType
+    private let trainNumber: String
+    private let isDisabled: Bool
     
     init(trainName: TrainNameType, trainNumber: String, isDisabled: Bool) {
         self.trainName = trainName
@@ -27,12 +27,12 @@ final class TrainInfoView: BaseView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private lazy var trainNameLabel = TrainNameLabel(trainName: trainName, isDisable: isDisabled)
+    private lazy var trainNameLabel = TrainNameLabel(trainName: trainName, isDisabled: isDisabled)
     private let trainNumberLabel = UILabel()
-    private let trainInofoStackView = UIStackView()
+    private let trainInfoStackView = UIStackView()
     
     override func setUI() {
-        addSubviews(trainInofoStackView)
+        addSubviews(trainInfoStackView)
     }
     
     override func setStyle() {
@@ -43,7 +43,7 @@ final class TrainInfoView: BaseView {
             $0.textAlignment = .center
         }
         
-        trainInofoStackView.do {
+        trainInfoStackView.do {
             $0.addArrangedSubviews(trainNameLabel,trainNumberLabel)
             $0.axis = .horizontal
             $0.spacing = 4
@@ -52,7 +52,7 @@ final class TrainInfoView: BaseView {
     }
     
     override func setLayout() {
-        trainInofoStackView.snp.makeConstraints{
+        trainInfoStackView.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
     }
