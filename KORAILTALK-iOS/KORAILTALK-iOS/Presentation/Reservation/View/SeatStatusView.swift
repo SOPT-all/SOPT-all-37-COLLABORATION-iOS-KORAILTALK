@@ -83,15 +83,8 @@ final class SeatStatusView: BaseView {
     // MARK: - SetLayout
     
     override func setLayout() {
-        
         seatStatusStackView.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
-        
     }
-    
-}
-
-#Preview {
-    SeatStatusView(seatType: .premium, seatStatus: .almostSoldOut)
 }
