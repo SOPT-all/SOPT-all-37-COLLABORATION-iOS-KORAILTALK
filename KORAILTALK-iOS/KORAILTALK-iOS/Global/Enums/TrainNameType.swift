@@ -38,7 +38,7 @@ enum TrainNameType: String, CaseIterable {
         case .itxSaemaeul, .itxMaeum:
             return .secondaryM400
         case .mugunghwa:
-            return .piontOrange
+            return .pointOrange
             
         }
     }
