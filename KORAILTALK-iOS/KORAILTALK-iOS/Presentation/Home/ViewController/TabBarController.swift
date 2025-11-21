@@ -124,6 +124,7 @@ public final class TabBarController: UITabBarController {
 }
 
 // MARK: - UITabBarControllerDelegate
+
 extension TabBarController: UITabBarControllerDelegate {
     
     private static var lastSelectedIndex: Int = 0
