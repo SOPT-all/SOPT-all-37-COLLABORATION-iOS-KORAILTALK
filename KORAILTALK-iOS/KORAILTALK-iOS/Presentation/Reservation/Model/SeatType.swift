@@ -25,7 +25,7 @@ enum SeatStatus: String, CaseIterable {
         case .available:
             return .gray400
         case .almostSoldOut:
-            return .piontRed
+            return .pointRed
         }
     }
     
