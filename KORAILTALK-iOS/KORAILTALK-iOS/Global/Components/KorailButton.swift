@@ -24,7 +24,6 @@ enum KorailButtonStyle {
     case secondary
     case gray
     case red
-    case disabled
 }
 
 final class KorailButton: UIButton{
@@ -47,9 +46,8 @@ final class KorailButton: UIButton{
     
     // MARK: - Setup Style
     private func setupStyle() {
-        layer.cornerRadius = 12
+        layer.cornerRadius = 8
         
-        // 폰트 설정 (크기별)
         switch buttonSize {
         case .small:
             titleLabel?.font = .body3_r_15
@@ -59,7 +57,6 @@ final class KorailButton: UIButton{
             titleLabel?.font = .head4_m_18
         }
         
-        // 스타일 설정
         switch buttonStyle {
         case .primary:
             backgroundColor = .primary700
@@ -78,14 +75,8 @@ final class KorailButton: UIButton{
         case .red:
             backgroundColor = .pointRed
             setTitleColor(.white, for: .normal)
-            
-        case .disabled:
-            backgroundColor = .gray200
-            setTitleColor(.gray300, for: .normal)
-            isEnabled = false
         }
         
-        // 터치 피드백
         addTarget(self, action: #selector(buttonPressed), for: .touchDown)
         addTarget(self, action: #selector(buttonReleased), for: [.touchUpInside, .touchUpOutside, .touchCancel])
     }
@@ -124,16 +115,15 @@ final class KorailButton: UIButton{
         }
     }
     
-    // MARK: - Public Methods
-    
-    func setEnabled(_ enabled: Bool) {
-        isEnabled = enabled
-        
-        if enabled {
-            setupStyle()
-        } else {
-            backgroundColor = .gray300
-            setTitleColor(.gray300, for: .normal)
+    override var isEnabled: Bool {
+        didSet {
+            if isEnabled {
+                setupStyle()
+            } else {
+                backgroundColor = .gray200
+                setTitleColor(.gray300, for: .normal)
+                layer.borderWidth = 0
+            }
         }
     }
 }
