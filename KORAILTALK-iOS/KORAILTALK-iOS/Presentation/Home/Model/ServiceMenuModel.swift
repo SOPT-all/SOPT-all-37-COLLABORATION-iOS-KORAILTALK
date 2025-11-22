@@ -14,11 +14,11 @@ struct ServiceMenuModel {
     static let mockData: [ServiceMenuModel] = [
         ServiceMenuModel(
             title: "길안내",
-            serviceImage: UIImage(named: "location")
+            serviceImage: UIImage(named: "navigation")
         ),
         ServiceMenuModel(
             title: "열차위치",
-            serviceImage: UIImage(named: "navigation")
+            serviceImage: UIImage(named: "location")
         ),
         ServiceMenuModel(
             title: "주차",

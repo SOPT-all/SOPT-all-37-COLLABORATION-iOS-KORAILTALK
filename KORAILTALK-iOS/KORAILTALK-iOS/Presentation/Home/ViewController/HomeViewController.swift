@@ -33,7 +33,7 @@ final class HomeViewController: UIViewController {
     // MARK: - Setup Actions
     
     private func setupStyle() {
-        view.backgroundColor = .gray50
+        view.backgroundColor = .pointRed
     }
     
     private func setupDelegate() {
@@ -48,10 +48,8 @@ final class HomeViewController: UIViewController {
     private func setupLayout() {
         serviceMenuView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(600)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
-        
     }
 }
 

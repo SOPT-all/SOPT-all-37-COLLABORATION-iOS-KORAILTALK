@@ -25,12 +25,31 @@ final class ServiceMenuView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupStyle()
         setupHierarchy()
         setupLayout()
+        
+        collectionView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        collectionView.removeObserver(self, forKeyPath: "contentSize")
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "contentSize" {
+            if object is UICollectionView {
+                if collectionView.contentSize.height > 0 {
+                    self.snp.updateConstraints {
+                        $0.height.equalTo(collectionView.contentSize.height)
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - Setup
@@ -43,6 +62,15 @@ final class ServiceMenuView: UIView {
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        self.snp.makeConstraints {
+            $0.height.equalTo(100)
+        }
+    }
+    
+    private func setupStyle() {
+        backgroundColor = .white
+        layer.cornerRadius = 10
+        clipsToBounds = true
     }
     
     // MARK: - Layout Logic
