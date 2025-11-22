@@ -144,8 +144,3 @@ final class ReservationInfoView: BaseView {
     }
     
 }
-
-#Preview {
-    ReservationInfoView()
-        
-}
