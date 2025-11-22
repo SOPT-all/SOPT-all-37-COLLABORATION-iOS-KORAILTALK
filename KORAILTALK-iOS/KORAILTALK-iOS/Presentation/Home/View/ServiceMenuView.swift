@@ -16,7 +16,7 @@ final class ServiceMenuView: UIView {
         frame: .zero,
         collectionViewLayout: createLayout()
     ).then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.isScrollEnabled = false
         $0.register(ServiceMenuCell.self, forCellWithReuseIdentifier: ServiceMenuCell.identifier)
     }
@@ -63,8 +63,8 @@ final class ServiceMenuView: UIView {
             $0.edges.equalToSuperview()
         }
         self.snp.makeConstraints {
-            $0.height.equalTo(100)
-        }
+                $0.height.equalTo(100)
+            }
     }
     
     private func setupStyle() {

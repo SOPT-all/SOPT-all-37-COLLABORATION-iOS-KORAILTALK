@@ -20,7 +20,7 @@ final class ServiceMenuCell: UICollectionViewCell {
     }
     
     private let titleLabel = UILabel().then {
-        $0.font = .body3_r_15 //수정해야 함!!
+        $0.font = .body4_m_14
         $0.textColor = .mainBlack
         $0.textAlignment = .center
         $0.numberOfLines = 2
