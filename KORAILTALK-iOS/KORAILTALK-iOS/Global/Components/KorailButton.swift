@@ -9,120 +9,43 @@ import UIKit
 import SnapKit
 import Then
 
-// MARK: - Button Size
+final class KorailButton: UIButton {
 
-enum KorailButtonSize {
-    case small
-    case medium
-    case large
-}
+    private let style: KorailButtonStyle
 
-// MARK: - Button Style
-
-enum KorailButtonStyle {
-    case primary
-    case secondary
-    case gray
-    case red
-}
-
-final class KorailButton: UIButton{
-    private var buttonSize: KorailButtonSize
-    private var buttonStyle: KorailButtonStyle
-    
-    init(title: String, size: KorailButtonSize, style: KorailButtonStyle){
-        self.buttonSize = size
-        self.buttonStyle = style
+    init(title: String, style: KorailButtonStyle) {
+        self.style = style
         super.init(frame: .zero)
-        
-        setTitle(title, for: .normal)
-        setupStyle()
-        setupLayout()
+        setup(title: title)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Setup Style
-    private func setupStyle() {
+
+    private func setup(title: String) {
+        setTitle(title, for: .normal)
         layer.cornerRadius = 8
-        
-        switch buttonSize {
-        case .small:
-            titleLabel?.font = .body3_r_15
-        case .medium:
-            titleLabel?.font = .body2_m_15
-        case .large:
-            titleLabel?.font = .head4_m_18
-        }
-        
-        switch buttonStyle {
-        case .primary:
-            backgroundColor = .primary700
-            setTitleColor(.white, for: .normal)
-            
-        case .secondary:
-            backgroundColor = .mainWhite
-            setTitleColor(.mainBlack, for: .normal)
-            layer.borderWidth = 1.5
-            layer.borderColor = UIColor.gray200.cgColor
-            
-        case .gray:
-            backgroundColor = .gray100
-            setTitleColor(.mainBlack, for: .normal)
-            
-        case .red:
-            backgroundColor = .pointRed
-            setTitleColor(.white, for: .normal)
-        }
-        
-        addTarget(self, action: #selector(buttonPressed), for: .touchDown)
-        addTarget(self, action: #selector(buttonReleased), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        clipsToBounds = true
+        applyStyle()
     }
-    
-    // MARK: - Setup Layout
-    
-    private func setupLayout() {
-        translatesAutoresizingMaskIntoConstraints = false
+
+    private func applyStyle() {
+        backgroundColor = isEnabled ? style.enabledBackgroundColor : style.disabledBackgroundColor
         
-        let height: CGFloat
-        switch buttonSize {
-        case .small:
-            height = 40
-        case .medium:
-            height = 40
-        case .large:
-            height = 48
-        }
+        setTitleColor(style.enabledTitleColor, for: .normal)
+        setTitleColor(style.disabledTitleColor, for: .disabled)
         
-        heightAnchor.constraint(equalToConstant: height).isActive = true
+        layer.borderWidth = style.borderWidth
+        layer.borderColor = style.borderColor
     }
-    
-    // MARK: - Touch Feedback
-    
-    @objc private func buttonPressed() {
-        UIView.animate(withDuration: 0.1) {
-            self.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
-            self.alpha = 0.8
-        }
-    }
-    
-    @objc private func buttonReleased() {
-        UIView.animate(withDuration: 0.1) {
-            self.transform = .identity
-            self.alpha = 1.0
-        }
-    }
-    
-    override var isEnabled: Bool {
+
+    override var isHighlighted: Bool {
         didSet {
-            if isEnabled {
-                setupStyle()
-            } else {
-                backgroundColor = .gray200
-                setTitleColor(.gray300, for: .normal)
-                layer.borderWidth = 0
+            UIView.animate(withDuration: 0.08) {
+                self.transform = self.isHighlighted
+                ? CGAffineTransform(scaleX: 0.97, y: 0.97)
+                : .identity
             }
         }
     }
