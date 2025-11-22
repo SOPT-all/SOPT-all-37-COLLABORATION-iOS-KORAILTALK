@@ -23,13 +23,29 @@ final class ReservationInfoView: BaseView {
     
     private let reservationDetailLabel = UILabel()
     
+    private let leftButton = UIButton()
+    private let rightButton = UIButton()
+    private let dateTitleLabel = UILabel()
+    private let dateLabel = UILabel()
+    private let dateStackView = UIStackView()
+    
+    
+    private let checkBox = CheckBox()
+    private let checkBoxLabel = UILabel()
+    private let checkBoxStackView = UIStackView()
+    
+    //MARK: - SetUI
     
     override func setUI() {
-     addSubviews(routeStackView)
-        addSubviews(reservationDetailLabel)
+        addSubview(routeStackView)
+        addSubview(reservationDetailLabel)
+        addSubview(dateStackView)
+        addSubview(checkBoxStackView)
     }
+    //MARK: - SetStyle
     
     override func setStyle() {
+        
         originLabel.do {
             $0.text = "서울"
             $0.textColor = .primary400
@@ -62,15 +78,68 @@ final class ReservationInfoView: BaseView {
             $0.textAlignment = .center
         }
         
+        leftButton.do {
+            $0.setImage(UIImage(named: "leftarrow"), for: .normal)
+            
+        }
+        
+        dateTitleLabel.do {
+            $0.text = "가는 날 "
+            $0.font = .body4_m_14
+            $0.textColor = .gray400
+            $0.textAlignment = .center
+        }
+        
+        
+        dateLabel.do {
+            $0.text = "11월 10일 (화)"
+            $0.font = .body4_m_14
+            $0.textColor = .mainBlack
+            $0.textAlignment = .center
+        }
+        rightButton.do {
+            $0.setImage(UIImage(named: "rightarrow"), for: .normal)
+        }
+        
+        dateStackView.do {
+            $0.addArrangedSubviews(leftButton, dateTitleLabel, dateLabel, rightButton)
+            $0.axis = .horizontal
+            $0.spacing = 11
+        }
+        
+        checkBoxLabel.do {
+            $0.text = "예약가능"
+            $0.font = .body2_m_15
+            $0.textColor = .gray500
+        }
+        
+        checkBoxStackView.do {
+            $0.addArrangedSubviews(checkBox,checkBoxLabel)
+            $0.axis = .horizontal
+            $0.spacing = 0
+        }
     }
+    
+    //MARK: - SetLayout
     
     override func setLayout() {
         routeStackView.snp.makeConstraints{
-            $0.edges.equalToSuperview()
+            $0.leading.top.equalToSuperview()
         }
+        
         reservationDetailLabel.snp.makeConstraints {
             $0.leading.equalTo(routeStackView.snp.leading)
             $0.top.equalTo(routeStackView.snp.bottom).offset(8)
+        }
+        
+        dateStackView.snp.makeConstraints {
+            $0.leading.equalTo(routeStackView.snp.leading)
+            $0.top.equalTo(reservationDetailLabel.snp.bottom).offset(27)
+        }
+        
+        checkBoxStackView.snp.makeConstraints {
+            $0.trailing.equalToSuperview()
+            $0.centerY.equalTo(dateStackView.snp.centerY)
         }
     }
     
@@ -78,4 +147,5 @@ final class ReservationInfoView: BaseView {
 
 #Preview {
     ReservationInfoView()
+        
 }
