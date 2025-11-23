@@ -23,7 +23,6 @@ final class ServiceMenuCell: UICollectionViewCell {
         $0.font = .body4_m_14
         $0.textColor = .mainBlack
         $0.textAlignment = .center
-        $0.numberOfLines = 2
     }
     
     // MARK: - Init
@@ -46,12 +45,12 @@ final class ServiceMenuCell: UICollectionViewCell {
     }
     
     private func setupLayout() {
+
         iconImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(28)
             $0.centerX.equalToSuperview()
-            $0.size.equalTo(44)
+            $0.size.equalTo(24)
         }
-        
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(iconImageView.snp.bottom).offset(7)
             $0.leading.trailing.equalToSuperview().inset(2)
