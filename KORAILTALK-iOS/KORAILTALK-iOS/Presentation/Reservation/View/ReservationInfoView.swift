@@ -12,8 +12,6 @@ import Then
 
 final class ReservationInfoView: BaseView {
     
-    
-    
     //MARK: - UI
     
     private let originLabel = UILabel()
@@ -37,10 +35,7 @@ final class ReservationInfoView: BaseView {
     //MARK: - SetUI
     
     override func setUI() {
-        addSubview(routeStackView)
-        addSubview(reservationDetailLabel)
-        addSubview(dateStackView)
-        addSubview(checkBoxStackView)
+        addSubviews(routeStackView,reservationDetailLabel,dateStackView, checkBoxStackView)
     }
     //MARK: - SetStyle
     
@@ -125,6 +120,7 @@ final class ReservationInfoView: BaseView {
     override func setLayout() {
         routeStackView.snp.makeConstraints{
             $0.leading.top.equalToSuperview()
+            $0.trailing.lessThanOrEqualToSuperview()
         }
         
         reservationDetailLabel.snp.makeConstraints {
@@ -135,11 +131,15 @@ final class ReservationInfoView: BaseView {
         dateStackView.snp.makeConstraints {
             $0.leading.equalTo(routeStackView.snp.leading)
             $0.top.equalTo(reservationDetailLabel.snp.bottom).offset(27)
+            $0.bottom.equalTo(checkBoxStackView.snp.bottom)
+            $0.trailing.lessThanOrEqualTo(checkBoxStackView.snp.leading).offset(-8)
         }
         
         checkBoxStackView.snp.makeConstraints {
+            $0.top.equalTo(reservationDetailLabel.snp.bottom).offset(27)
             $0.trailing.equalToSuperview()
-            $0.centerY.equalTo(dateStackView.snp.centerY)
+            $0.bottom.equalToSuperview()
+            
         }
     }
     
