@@ -19,28 +19,28 @@ final class TicketSearchFormView: BaseView{
     private let arrivalRow = StationRowView(title: "도착", station: "부산")
     private let separator2 = UIView()
     
-    private let dateRow = InfoRowView(iconName: "calendar", content: "11.10 (월) · 14시 이후")
+    private let dateRow = InfoRowView(image: UIImage(named: "calendar"), content: "11.10 (월) · 14시 이후")
     private let separator3 = UIView()
     
-    private let passengerRow = InfoRowView(iconName: "person", content: "어른 1명")
+    private let passengerRow = InfoRowView(image: UIImage(named: "person"), content: "어른 1명")
     
     lazy var switchButton = StationSwitchButton().then {
         $0.addTarget(self, action: #selector(switchButtonTapped), for: .touchUpInside)
     }
     
+    let searchButton = KorailButton(title: "열차조회", style: .primary)
+    
     override func setStyle() {
-        self.backgroundColor = .white
+        self.backgroundColor = .mainWhite
         self.layer.cornerRadius = 10
         
-        // 그림자 설정
-        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowColor = UIColor.mainBlack.cgColor
         self.layer.shadowOpacity = 0.1
         self.layer.shadowOffset = CGSize(width: 0, height: 4)
         self.layer.shadowRadius = 10
         
-        // 구분선 스타일
         [separator1, separator2, separator3].forEach {
-            $0.backgroundColor = .systemGray5
+            $0.backgroundColor = .gray150
         }
         
     }
@@ -54,6 +54,7 @@ final class TicketSearchFormView: BaseView{
         addSubview(separator3)
         addSubview(passengerRow)
         addSubview(switchButton)
+        addSubview(searchButton)
     }
     
     override func setLayout() {
@@ -73,8 +74,8 @@ final class TicketSearchFormView: BaseView{
         
         switchButton.snp.makeConstraints {
             $0.size.equalTo(40)
-            $0.trailing.equalToSuperview().inset(20)
-            $0.centerY.equalTo(separator1) // 위치 잡는 로직은 부모가 담당
+            $0.trailing.equalToSuperview().inset(27)
+            $0.centerY.equalTo(separator1)
         }
         
         arrivalRow.snp.makeConstraints {
@@ -106,6 +107,13 @@ final class TicketSearchFormView: BaseView{
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(rowHeight)
         }
+        
+        searchButton.snp.makeConstraints {
+            $0.top.equalTo(passengerRow.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.height.equalTo(50)
+            $0.bottom.equalToSuperview().inset(20)
+        }
     }
     
     // MARK: - Logic
@@ -123,10 +131,7 @@ final class TicketSearchFormView: BaseView{
     }
     
     @objc private func switchButtonTapped() {
-        // 1. 버튼 UI 애니메이션 실행
         switchButton.rotateAnimation()
-        
-        // 2. 실제 데이터 교체 로직 실행
         switchStations()
     }
 }

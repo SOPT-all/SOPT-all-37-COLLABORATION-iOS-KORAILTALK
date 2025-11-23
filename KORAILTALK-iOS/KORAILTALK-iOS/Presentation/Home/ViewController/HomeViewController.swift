@@ -16,7 +16,11 @@ final class HomeViewController: BaseViewController {
     private let menuData = ServiceMenuModel.mockData
     
     // MARK: - UI Components
-    
+    private let titleLabel = UILabel().then {
+        $0.font = .head3_sb_18
+        $0.textColor = .primary700
+        $0.text = "어디로 가시겠어요?"
+    }
     private let ticketSearchFormView = TicketSearchFormView()
     private let serviceMenuView = ServiceMenuView()
     
@@ -26,7 +30,6 @@ final class HomeViewController: BaseViewController {
         setupLayout()
     }
     
-    // ?
     override func setDelegate() {
         serviceMenuView.collectionView.dataSource = self
         serviceMenuView.collectionView.delegate = self
@@ -37,13 +40,20 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupHierarchy() {
+        view.addSubview(titleLabel)
         view.addSubview(ticketSearchFormView)
         view.addSubview(serviceMenuView)
     }
     
     private func setupLayout() {
-        ticketSearchFormView.snp.makeConstraints{
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(-50)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(23)
+        }
+        
+        ticketSearchFormView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(16.5)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(324)
         }

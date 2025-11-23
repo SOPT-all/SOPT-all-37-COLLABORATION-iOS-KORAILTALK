@@ -71,9 +71,9 @@ final class InfoRowView: BaseView{
         $0.textColor = .mainBlack
     }
     
-    init(iconName: String, content: String) {
+    init(image: UIImage?, content: String) {
         super.init(frame: .zero)
-        iconImageView.image = UIImage(systemName: iconName)
+        iconImageView.image = image
         contentLabel.text = content
     }
     
