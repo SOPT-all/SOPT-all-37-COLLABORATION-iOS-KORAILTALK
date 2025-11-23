@@ -37,6 +37,12 @@ final class KorailButton: UIButton {
         layer.borderWidth = style.borderWidth
         layer.borderColor = style.borderColor
     }
+    
+    override var isEnabled: Bool {
+        didSet {
+            applyStyle()
+        }
+    }
 
     override var isHighlighted: Bool {
         didSet {
