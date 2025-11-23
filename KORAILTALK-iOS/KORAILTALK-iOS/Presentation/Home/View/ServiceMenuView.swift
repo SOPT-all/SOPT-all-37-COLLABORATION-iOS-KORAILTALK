@@ -18,7 +18,7 @@ final class ServiceMenuView: BaseView {
     )
     
     override func setStyle() {
-        backgroundColor = .white
+        backgroundColor = .mainWhite
         layer.cornerRadius = 10
         clipsToBounds = true
         
