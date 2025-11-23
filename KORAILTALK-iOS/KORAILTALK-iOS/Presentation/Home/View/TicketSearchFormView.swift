@@ -24,6 +24,10 @@ final class TicketSearchFormView: BaseView{
     
     private let passengerRow = InfoRowView(iconName: "person", content: "어른 1명")
     
+    lazy var switchButton = StationSwitchButton().then {
+        $0.addTarget(self, action: #selector(switchButtonTapped), for: .touchUpInside)
+    }
+    
     override func setStyle() {
         self.backgroundColor = .white
         self.layer.cornerRadius = 10
@@ -42,13 +46,14 @@ final class TicketSearchFormView: BaseView{
     }
     
     override func setUI() {
-        // 편의상 배열로 추가
-        [
-            departureRow, separator1,
-            arrivalRow, separator2,
-            dateRow, separator3,
-            passengerRow
-        ].forEach { addSubview($0) }
+        addSubview(departureRow)
+        addSubview(separator1)
+        addSubview(arrivalRow)
+        addSubview(separator2)
+        addSubview(dateRow)
+        addSubview(separator3)
+        addSubview(passengerRow)
+        addSubview(switchButton)
     }
     
     override func setLayout() {
@@ -64,6 +69,12 @@ final class TicketSearchFormView: BaseView{
             $0.top.equalTo(departureRow.snp.bottom)
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(1)
+        }
+        
+        switchButton.snp.makeConstraints {
+            $0.size.equalTo(40)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.centerY.equalTo(separator1) // 위치 잡는 로직은 부모가 담당
         }
         
         arrivalRow.snp.makeConstraints {
@@ -99,7 +110,7 @@ final class TicketSearchFormView: BaseView{
     
     // MARK: - Logic
     
-    func swapStations() {
+    func switchStations() {
         isBusanDestination.toggle()
         
         if isBusanDestination {
@@ -109,5 +120,13 @@ final class TicketSearchFormView: BaseView{
             departureRow.updateStation("부산")
             arrivalRow.updateStation("서울")
         }
+    }
+    
+    @objc private func switchButtonTapped() {
+        // 1. 버튼 UI 애니메이션 실행
+        switchButton.rotateAnimation()
+        
+        // 2. 실제 데이터 교체 로직 실행
+        switchStations()
     }
 }

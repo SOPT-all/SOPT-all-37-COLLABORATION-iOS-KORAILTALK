@@ -11,6 +11,8 @@ import SnapKit
 
 final class StationSwitchButton: UIButton {
 
+    private var currentAngle: CGFloat = .pi / 2
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupStyle()
@@ -21,24 +23,21 @@ final class StationSwitchButton: UIButton {
     }
     
     private func setupStyle() {
-        // 아이콘 설정
-        let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
-        let image = UIImage(systemName: "arrow.up.arrow.down", withConfiguration: config)
+        let image = UIImage.exchange
         
         self.setImage(image, for: .normal)
-        self.tintColor = .black
-        self.backgroundColor = .white
+        self.tintColor = .mainBlack
+        self.backgroundColor = .mainWhite
         
-        // 원형 및 테두리
         self.layer.cornerRadius = 20
         self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.systemGray5.cgColor
+        self.layer.borderColor = UIColor.gray150.cgColor
+        
+        self.rotate(to: currentAngle, duration: 0)
     }
     
-    // 버튼 자체의 회전 애니메이션 메서드
     func rotateAnimation() {
-        UIView.animate(withDuration: 0.25) {
-            self.transform = self.transform.rotated(by: .pi)
-        }
+        currentAngle += .pi
+        self.rotate(to: currentAngle)
     }
 }
