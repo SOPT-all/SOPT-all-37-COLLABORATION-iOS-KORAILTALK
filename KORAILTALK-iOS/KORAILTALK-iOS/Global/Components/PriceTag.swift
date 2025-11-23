@@ -51,8 +51,8 @@ enum SeatStateType: CaseIterable {
 final class PriceTagView: UIButton {
     
     private let seatState: SeatStateType
-    private let roomLabelText : String //특실/일반
-    private let priceText: String   //W52,000
+    private let roomLabelText : String
+    private let priceText: String
     
     private let fixedSize = CGSize(width: 343, height: 45)
     
