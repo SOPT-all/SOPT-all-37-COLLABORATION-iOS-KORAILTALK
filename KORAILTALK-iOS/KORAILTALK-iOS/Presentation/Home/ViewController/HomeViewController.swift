@@ -5,9 +5,9 @@
 //  Created by 한현서 on 11/20/25.
 //
 
-import Foundation
 import UIKit
 import SnapKit
+import Then
 
 final class HomeViewController: BaseViewController {
     
@@ -17,8 +17,8 @@ final class HomeViewController: BaseViewController {
     
     // MARK: - UI Components
     
+    private let ticketSearchFormView = TicketSearchFormView()
     private let serviceMenuView = ServiceMenuView()
-    
     
     override func setView() {
         setupStyle()
@@ -26,6 +26,7 @@ final class HomeViewController: BaseViewController {
         setupLayout()
     }
     
+    // ?
     override func setDelegate() {
         serviceMenuView.collectionView.dataSource = self
         serviceMenuView.collectionView.delegate = self
@@ -36,12 +37,19 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupHierarchy() {
+        view.addSubview(ticketSearchFormView)
         view.addSubview(serviceMenuView)
     }
     
     private func setupLayout() {
-        serviceMenuView.snp.makeConstraints {
+        ticketSearchFormView.snp.makeConstraints{
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(324)
+        }
+        
+        serviceMenuView.snp.makeConstraints {
+            $0.top.equalTo(ticketSearchFormView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(260)
         }

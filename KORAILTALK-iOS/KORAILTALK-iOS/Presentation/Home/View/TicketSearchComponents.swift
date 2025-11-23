@@ -50,6 +50,10 @@ final class StationRowView: BaseView{
             $0.trailing.equalToSuperview().inset(20)
         }
     }
+    
+    func updateStation(_ name: String) {
+            stationLabel.text = name
+    }
 }
 
 
