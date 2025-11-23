@@ -22,7 +22,7 @@ final class NavigationBar: UIView {
     
     private let rightWrap = UIView()
     
-    enum ViewState {
+    enum NavigationBarStyle {
         case home
         case trainLookup
         case payment
@@ -34,7 +34,7 @@ final class NavigationBar: UIView {
         return CGSize(width: UIView.noIntrinsicMetric, height: fixedHeight)
     }
     
-    init(style: ViewState) {
+    init(style: NavigationBarStyle) {
         super.init(frame: .zero)
         setupUI()
         configureContents(for: style)
@@ -55,7 +55,7 @@ final class NavigationBar: UIView {
         reloadButton.setImage(UIImage(named: "reload"), for: .normal)
         reloadButton.tintColor = .white
         
-        cancelButton.setImage(UIImage(named: "cancle"), for: .normal)
+        cancelButton.setImage(UIImage(named: "cancel"), for: .normal)
         cancelButton.tintColor = .white
         
         hamburgerButton.setImage(UIImage(named: "hamburger"), for: .normal)
@@ -68,7 +68,7 @@ final class NavigationBar: UIView {
         titleLabel.textAlignment = .center
     }
     
-    private func configureContents(for style: ViewState) {
+    private func configureContents(for style: NavigationBarStyle) {
         
         subviews.forEach { $0.removeFromSuperview() }
         rightWrap.subviews.forEach { $0.removeFromSuperview() }
@@ -94,7 +94,7 @@ final class NavigationBar: UIView {
     }
     
     //MARK: - Layout
-    private func setupLayout(for style: ViewState) {
+    private func setupLayout(for style: NavigationBarStyle) {
         switch style {
             case .home:
                 logoImageView.snp.makeConstraints {
@@ -136,6 +136,9 @@ final class NavigationBar: UIView {
                     $0.width.equalTo(fixedHeight)
                 }
                 cancelButton.snp.makeConstraints {
+                    $0.centerY.equalToSuperview()
+                    $0.height.equalTo(fixedHeight)
+                    $0.width.equalTo(fixedHeight)
                     $0.trailing.equalToSuperview()
                 }
             case .trainLookup:
