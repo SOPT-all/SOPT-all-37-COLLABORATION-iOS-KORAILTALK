@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-enum SeatStateType: CaseIterable {
+enum SeatStyleType: CaseIterable {
     case general
     case disabled
     case selected
@@ -50,7 +50,7 @@ enum SeatStateType: CaseIterable {
 
 final class PriceTagView: UIButton {
     
-    private let seatState: SeatStateType
+    private let seatStyle: SeatStyleType
     private let roomLabelText : String
     private let priceText: String
     
@@ -65,11 +65,11 @@ final class PriceTagView: UIButton {
     }
     
     init(
-        seatState: SeatStateType,
+        seatStyle: SeatStyleType,
         roomLabel: String,
         price: String
     ) {
-        self.seatState = seatState
+        self.seatStyle = seatStyle
         self.roomLabelText = roomLabel
         self.priceText = price
         
@@ -81,7 +81,7 @@ final class PriceTagView: UIButton {
     }
     
     required init?(coder: NSCoder) {
-         self.seatState = .general
+         self.seatStyle = .general
          self.roomLabelText = "일반실"
          self.priceText = "₩0"
          super.init(coder: coder)
@@ -92,27 +92,27 @@ final class PriceTagView: UIButton {
     
     private func setupButton() {
         layer.cornerRadius = 8
-        if let border = seatState.borderColor {
+        if let border = seatStyle.borderColor {
             layer.borderColor = border
             layer.borderWidth = 1
         }else {
             layer.borderWidth = 0
         }
-        backgroundColor = seatState.backgroundColor
+        backgroundColor = seatStyle.backgroundColor
         
         roomLabel.text = roomLabelText
         roomLabel.font = .body1_r_16
-        roomLabel.textColor = seatState.textColor
+        roomLabel.textColor = seatStyle.textColor
         
         priceLabel.text = priceText
         priceLabel.font = .body1_r_16
-        priceLabel.textColor = seatState.textColor
+        priceLabel.textColor = seatStyle.textColor
         
         addSubviews(roomLabel,priceLabel)
         
-        snp.makeConstraints { make in
-            make.width.equalTo(fixedSize.width)
-            make.height.equalTo(fixedSize.height)
+        snp.makeConstraints {
+            $0.width.equalTo(fixedSize.width)
+            $0.height.equalTo(fixedSize.height)
         }
     }
     
