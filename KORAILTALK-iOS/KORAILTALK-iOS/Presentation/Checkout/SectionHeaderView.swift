@@ -23,44 +23,43 @@ final class SectionHeaderView: UIView {
         $0.textColor = .pointRed
         $0.font = .body5_r_13
         $0.isHidden = true
+        $0.textAlignment = .right
     }
     
     // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupView()
-        setupLayout()
+        setupUI()
+        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupView()
-        setupLayout()
+        setupUI()
+        setupConstraints()
     }
     
     // MARK: - Setup
     
-    private func setupView() {
+    private func setupUI() {
         backgroundColor = .gray50
-        
-        addSubview(titleLabel)
-        addSubview(rightLabel)
+        addSubviews(titleLabel, rightLabel)
     }
     
-    private func setupLayout() {
-        snp.makeConstraints { make in
-            make.height.equalTo(44)
+    private func setupConstraints() {
+        snp.makeConstraints {
+            $0.height.equalTo(44)
         }
         
-        titleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(20)
-            make.centerY.equalToSuperview()
+        titleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(20)
+            $0.centerY.equalToSuperview()
         }
         
-        rightLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(20)
-            make.centerY.equalToSuperview()
+        rightLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.centerY.equalToSuperview()
         }
     }
     
@@ -69,11 +68,12 @@ final class SectionHeaderView: UIView {
     func configure(title: String, rightText: String? = nil) {
         titleLabel.text = title
         
-        if let rightText = rightText, rightText.isEmpty == false {
-            rightLabel.text = rightText
-            rightLabel.isHidden = false
-        } else {
+        guard let rightText, !rightText.isEmpty else {
             rightLabel.isHidden = true
+            return
         }
+        
+        rightLabel.text = rightText
+        rightLabel.isHidden = false
     }
 }
