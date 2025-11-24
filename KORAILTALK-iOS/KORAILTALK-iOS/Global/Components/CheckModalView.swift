@@ -10,94 +10,73 @@ import UIKit
 import SnapKit
 import Then
 
-enum ModalType: CaseIterable {
-    case cancel
-    case delete
-    
-    var question: String {
-        switch self {
-        case .cancel:
-            return "예약을 취소하시겠습니까?"
-        case .delete:
-            return "해당 카테고리를 삭제할까요?"
-        }
-    }
-}
-
 final class CheckModalView: BaseView {
-
-    private let modalType: ModalType
     
-    private let questionLabel = UILabel()
-    private let confirmButton = UIButton()
-    private let noButton = UIButton()
+    private let questionLabel = UILabel().then{
+        $0.textAlignment = .center
+        $0.font = .sub3_m_16
+    }
+    private let confirmButton = UIButton().then{
+        $0.layer.cornerRadius = 8
+        $0.setTitleColor(.mainWhite, for: .normal)
+    }
+    
+    private let noButton = UIButton().then {
+        $0.setTitle("아니오", for: .normal)
+        $0.backgroundColor = .gray100
+        $0.setTitleColor(.mainBlack, for: .normal)
+        $0.layer.cornerRadius = 8
+        $0.isHidden = true
+    }
+    private let buttonStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.distribution = .fillEqually
+    }
     
     // MARK: - Init
-
-    init(modalType: ModalType){
-        self.modalType = modalType
-        super.init(frame: .zero)
+    private let defaultSize = CGSize(width: 304, height: 148)
+    override init(frame: CGRect){
+        let frame = CGRect(origin: .zero, size: defaultSize)
+        super.init(frame: frame)
         setupUI()
-        configureContents()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(
+        question: String,
+        confirmText: String,
+        confirmColor: UIColor,
+        showNoButton: Bool = false
+    ) {
+        questionLabel.text = question
+        confirmButton.setTitle(confirmText, for: .normal)
+        confirmButton.backgroundColor = confirmColor
+        noButton.isHidden = !showNoButton
     }
     
     private func setupUI() {
         backgroundColor = .mainWhite
         layer.cornerRadius = 12
         
-        noButton.setTitle("아니오", for: .normal)
-        noButton.backgroundColor = .gray100
-        noButton.setTitleColor(.mainBlack, for: .normal)
-        noButton.layer.cornerRadius = 8
-        confirmButton.layer.cornerRadius = 8
-        confirmButton.setTitleColor(.mainWhite, for: .normal)
+        addSubviews(questionLabel, buttonStack)
         
-        addSubviews(questionLabel)
-        questionLabel.textAlignment = .center
-        questionLabel.font = .sub3_m_16
+        buttonStack.addArrangedSubview(noButton)
+        buttonStack.addArrangedSubview(confirmButton)
         questionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(40)
             $0.leading.trailing.equalToSuperview().inset(12)
         }
-        addSubview(confirmButton)
-        
-        if modalType == .cancel {
-            addSubview(noButton)
-            noButton.snp.makeConstraints {
-                $0.height.equalTo(40)
-                $0.leading.equalToSuperview().inset(12)
-                $0.bottom.equalToSuperview().inset(12)
-            }
-            confirmButton.snp.makeConstraints {
-                $0.trailing.equalToSuperview().inset(12)
-                $0.leading.equalTo(noButton.snp.trailing).offset(8)
-                $0.height.equalTo(40)
-                $0.bottom.equalToSuperview().inset(12)
-                $0.width.equalTo(136)
-            }
-        }else{
-            confirmButton.snp.makeConstraints {
-                $0.trailing.leading.equalToSuperview().inset(12)
-                $0.height.equalTo(40)
-                $0.bottom.equalToSuperview().inset(12)
-            }
+        buttonStack.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(12)
+            $0.height.equalTo(40)
         }
     }
-    
-    
-    private func configureContents() {
-        questionLabel.text = modalType.question
-        
-        if modalType == .cancel {
-            confirmButton.setTitle("예", for: .normal)
-            confirmButton.backgroundColor = .pointRed
-        }
-        else{
-            confirmButton.setTitle("확인", for: .normal)
-            confirmButton.backgroundColor = .primary500
-        }
-    }
+}
+
+#Preview{
+    CheckModalView()
 }
