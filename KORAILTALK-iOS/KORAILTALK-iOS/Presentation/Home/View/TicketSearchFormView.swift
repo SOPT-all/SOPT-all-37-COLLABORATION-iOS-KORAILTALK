@@ -50,12 +50,10 @@ final class TicketSearchFormView: BaseView{
     }
     
     override func setLayout() {
-        let rowHeight = 55
         
         departureRow.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
             $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(rowHeight)
         }
         
         separator1.snp.makeConstraints {
@@ -73,7 +71,6 @@ final class TicketSearchFormView: BaseView{
         arrivalRow.snp.makeConstraints {
             $0.top.equalTo(separator1.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(rowHeight)
         }
         
         separator2.snp.makeConstraints {
@@ -85,7 +82,6 @@ final class TicketSearchFormView: BaseView{
         dateRow.snp.makeConstraints {
             $0.top.equalTo(separator2.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(rowHeight)
         }
         
         separator3.snp.makeConstraints {
@@ -97,7 +93,6 @@ final class TicketSearchFormView: BaseView{
         passengerRow.snp.makeConstraints {
             $0.top.equalTo(separator3.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(rowHeight)
         }
         
         searchButton.snp.makeConstraints {

@@ -47,7 +47,7 @@ final class HomeViewController: BaseViewController {
     
     private func setupLayout() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(-50)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(-50) // 네비바 나오면 수정!
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(23)
         }
@@ -55,13 +55,13 @@ final class HomeViewController: BaseViewController {
         ticketSearchFormView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16.5)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(324)
         }
         
         serviceMenuView.snp.makeConstraints {
-            $0.top.equalTo(ticketSearchFormView.snp.bottom).offset(20)
+            $0.top.equalTo(ticketSearchFormView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(260)
+            $0.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide).inset(16)
+            $0.height.equalTo(280)
         }
     }
     

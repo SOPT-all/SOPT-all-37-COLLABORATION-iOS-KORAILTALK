@@ -15,11 +15,13 @@ final class StationRowView: BaseView{
     private let titleLabel = UILabel().then{
         $0.font = .body2_m_15
         $0.textColor = .gray400
+        $0.setContentCompressionResistancePriority(.required, for: .vertical)
     }
     
     let stationLabel = UILabel().then {
         $0.font = .head2_m_20
         $0.textColor = .mainBlack
+        $0.setContentCompressionResistancePriority(.required, for: .vertical)
     }
     
     init (title: String, station: String){
@@ -37,21 +39,23 @@ final class StationRowView: BaseView{
     }
     
     override func setLayout() {
+        let verticalPadding = 15
+        
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(20)
             $0.centerY.equalToSuperview()
-            $0.width.equalTo(40)
+            $0.top.equalToSuperview().inset(verticalPadding)
+            $0.bottom.equalToSuperview().inset(verticalPadding)
         }
         
         stationLabel.snp.makeConstraints {
             $0.leading.equalTo(titleLabel.snp.trailing).offset(20)
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(20)
         }
     }
     
     func updateStation(_ name: String) {
-            stationLabel.text = name
+        stationLabel.text = name
     }
 }
 
@@ -63,11 +67,14 @@ final class InfoRowView: BaseView{
     private let iconImageView = UIImageView().then{
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .gray300
+        $0.setContentCompressionResistancePriority(.required, for: .vertical)
     }
     
     private let contentLabel = UILabel().then {
         $0.font = .sub3_m_16
         $0.textColor = .mainBlack
+        $0.numberOfLines = 1
+        $0.setContentCompressionResistancePriority(.required, for: .vertical)
     }
     
     init(image: UIImage?, content: String) {
@@ -93,8 +100,8 @@ final class InfoRowView: BaseView{
         
         contentLabel.snp.makeConstraints {
             $0.leading.equalTo(iconImageView.snp.trailing).offset(20)
-            $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().inset(20)
+            $0.verticalEdges.equalToSuperview().inset(14.5)
         }
     }
 }
