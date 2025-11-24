@@ -14,117 +14,82 @@ enum SeatStyleType: CaseIterable {
     case general
     case disabled
     case selected
-    
-    var backgroundColor: UIColor {
-        switch self {
-        case .general:
-            return .mainWhite
-        case .disabled:
-            return .gray200
-        case .selected:
-            return .primary200
-        }
-    }
-    var borderColor: CGColor? {
-        switch self {
-        case .general:
-            return UIColor.gray200.cgColor
-        case .disabled:
-            return nil
-        case .selected:
-            return UIColor.primary400.cgColor
-        }
-    }
-    
-    var textColor: UIColor {
-        switch self {
-        case .general:
-            return .mainBlack
-        case .disabled:
-            return .gray300
-        case .selected:
-            return .primary400
-        }
-    }
 }
 
-final class PriceTagView: UIButton {
-    
-    private let seatStyle: SeatStyleType
-    private let roomLabelText : String
-    private let priceText: String
-    
-    private let fixedSize = CGSize(width: 343, height: 45)
-    
+final class PriceTagView: BaseView {
     
     private let roomLabel = UILabel()
     private let priceLabel = UILabel()
     
-    override var intrinsicContentSize: CGSize {
-        return fixedSize
+    var seatStyle: SeatStyleType = .general {
+        didSet {
+            updateSelectedStyle()
+        }
     }
     
-    init(
-        seatStyle: SeatStyleType,
-        roomLabel: String,
-        price: String
-    ) {
+    init(roomLabel: String, price: String, seatStyle: SeatStyleType = .general) {
+        super.init(frame: .zero)
+        self.roomLabel.text = roomLabel
+        self.priceLabel.text = price
         self.seatStyle = seatStyle
-        self.roomLabelText = roomLabel
-        self.priceText = price
-        
-        let frame = CGRect(origin: .zero, size: fixedSize)
-        super.init(frame: frame)
-        
-        setupButton()
-        setupLayout()
+        setStyle()
+        setUI()
+        setLayout()
+        updateSelectedStyle()
     }
     
     required init?(coder: NSCoder) {
-         self.seatStyle = .general
-         self.roomLabelText = "일반실"
-         self.priceText = "₩0"
-         super.init(coder: coder)
-         self.frame.size = fixedSize
-         setupButton()
-         setupLayout()
-     }
-    
-    private func setupButton() {
-        layer.cornerRadius = 8
-        if let border = seatStyle.borderColor {
-            layer.borderColor = border
-            layer.borderWidth = 1
-        }else {
-            layer.borderWidth = 0
-        }
-        backgroundColor = seatStyle.backgroundColor
-        
-        roomLabel.text = roomLabelText
-        roomLabel.font = .body1_r_16
-        roomLabel.textColor = seatStyle.textColor
-        
-        priceLabel.text = priceText
-        priceLabel.font = .body1_r_16
-        priceLabel.textColor = seatStyle.textColor
-        
-        addSubviews(roomLabel,priceLabel)
-        
-        snp.makeConstraints {
-            $0.width.equalTo(fixedSize.width)
-            $0.height.equalTo(fixedSize.height)
-        }
+        fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupLayout() {
+    var isSelected: Bool = false {
+        didSet {
+            updateSelectedStyle()
+        }
+    }
+    private func updateSelectedStyle() {
+        switch seatStyle {
+        case .general:
+            layer.borderWidth = 1
+            layer.borderColor = UIColor.gray200.cgColor
+            backgroundColor = .mainWhite
+            roomLabel.textColor = .mainBlack
+            priceLabel.textColor = .mainBlack
+        case .disabled:
+            backgroundColor = .gray200
+            roomLabel.textColor = .gray300
+            priceLabel.textColor = .gray300
+        case .selected:
+            layer.borderWidth = 1
+            layer.borderColor = UIColor.primary400.cgColor
+            backgroundColor = .primary200
+            roomLabel.textColor = .primary400
+            priceLabel.textColor = .primary400
+        }
+            
+    }
+    
+    override func setStyle() {
+        layer.cornerRadius = 8
+        roomLabel.font = .body1_r_16
+        priceLabel.font = .body1_r_16
+    }
+    
+    override func setUI() {
+        addSubviews(roomLabel, priceLabel)
+    }
+            
+    override func setLayout() {
         roomLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
+            $0.top.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(12)
         }
         
         priceLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
+            $0.top.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(12)
         }
     }
 }
