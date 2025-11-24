@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A46AD1002ED23CF200A9C59A /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A46AD0FF2ED23CF200A9C59A /* Config.xcconfig */; };
 		A4FC95A82ECA472A000B1F48 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = A4FC95A72ECA472A000B1F48 /* Then */; };
 		A4FC95AB2ECA4736000B1F48 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A4FC95AA2ECA4736000B1F48 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A40143152EC9FB4D00D174C4 /* KORAILTALK-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KORAILTALK-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A46AD0FF2ED23CF200A9C59A /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,6 +54,7 @@
 		A401430C2EC9FB4D00D174C4 = {
 			isa = PBXGroup;
 			children = (
+				A46AD0FF2ED23CF200A9C59A /* Config.xcconfig */,
 				A40143172EC9FB4D00D174C4 /* KORAILTALK-iOS */,
 				A40143162EC9FB4D00D174C4 /* Products */,
 			);
@@ -135,6 +138,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A46AD1002ED23CF200A9C59A /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +223,7 @@
 		};
 		A401432B2EC9FB4F00D174C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A46AD0FF2ED23CF200A9C59A /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -283,6 +288,7 @@
 		};
 		A401432C2EC9FB4F00D174C4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A46AD0FF2ED23CF200A9C59A /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
