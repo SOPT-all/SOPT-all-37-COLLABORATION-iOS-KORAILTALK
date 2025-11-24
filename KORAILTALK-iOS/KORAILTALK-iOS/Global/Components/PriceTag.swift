@@ -51,20 +51,11 @@ final class PriceTagView: BaseView {
             roomLabel.textColor = .primary400
             priceLabel.textColor = .primary400
         }else {
-            // 선택 해제 시, 기본 스타일 그대로 유지
             layer.borderColor = UIColor.gray200.cgColor
             backgroundColor = .mainWhite
             roomLabel.textColor = .mainBlack
             priceLabel.textColor = .mainBlack
         }
-        
-        
-//        else {
-//            layer.borderWidth = 0
-//            backgroundColor = .gray200
-//            roomLabel.textColor = .gray300
-//            priceLabel.textColor = .gray300
-//        }
     }
     private func updateDisabledStyle() {
         if isDisabled {
