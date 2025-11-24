@@ -45,16 +45,15 @@ final class ServiceMenuCell: UICollectionViewCell {
     }
     
     private func setupLayout() {
-
         iconImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(28)
+            $0.top.equalToSuperview().offset(24)
             $0.centerX.equalToSuperview()
             $0.size.equalTo(24)
         }
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(iconImageView.snp.bottom).offset(7)
-            $0.leading.trailing.equalToSuperview().inset(2)
-            $0.bottom.lessThanOrEqualToSuperview().offset(-5)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.lessThanOrEqualToSuperview().offset(3)
         }
     }
     
