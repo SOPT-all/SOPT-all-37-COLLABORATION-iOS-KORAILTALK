@@ -33,8 +33,7 @@ final class StationRowView: BaseView{
     }
     
     override func setUI() {
-        addSubviews(titleLabel)
-        addSubviews(stationLabel)
+        addSubviews(titleLabel, stationLabel)
     }
     
     override func setLayout() {
@@ -82,8 +81,7 @@ final class InfoRowView: BaseView{
     }
     
     override func setUI() {
-        addSubview(iconImageView)
-        addSubview(contentLabel)
+        addSubviews(iconImageView, contentLabel)
     }
     
     override func setLayout() {

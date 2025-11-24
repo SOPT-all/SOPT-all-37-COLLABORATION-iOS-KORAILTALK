@@ -15,7 +15,7 @@ final class TicketSearchFormView: BaseView{
     
     private let departureRow = StationRowView(title: "출발", station: "서울")
     private let separator1 = UIView()
-        
+    
     private let arrivalRow = StationRowView(title: "도착", station: "부산")
     private let separator2 = UIView()
     
@@ -46,15 +46,7 @@ final class TicketSearchFormView: BaseView{
     }
     
     override func setUI() {
-        addSubview(departureRow)
-        addSubview(separator1)
-        addSubview(arrivalRow)
-        addSubview(separator2)
-        addSubview(dateRow)
-        addSubview(separator3)
-        addSubview(passengerRow)
-        addSubview(switchButton)
-        addSubview(searchButton)
+        addSubviews(departureRow, separator1, arrivalRow, separator2, dateRow, separator3, passengerRow, switchButton, searchButton)
     }
     
     override func setLayout() {
