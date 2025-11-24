@@ -5,9 +5,9 @@
 //  Created by 한현서 on 11/20/25.
 //
 
-import Foundation
 import UIKit
 import SnapKit
+import Then
 
 final class HomeViewController: BaseViewController {
     
@@ -16,9 +16,13 @@ final class HomeViewController: BaseViewController {
     private let menuData = ServiceMenuModel.mockData
     
     // MARK: - UI Components
-    
+    private let titleLabel = UILabel().then {
+        $0.font = .head3_sb_18
+        $0.textColor = .primary700
+        $0.text = "어디로 가시겠어요?"
+    }
+    private let ticketSearchFormView = TicketSearchFormView()
     private let serviceMenuView = ServiceMenuView()
-    
     
     override func setView() {
         setupStyle()
@@ -36,14 +40,28 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupHierarchy() {
+        view.addSubview(titleLabel)
+        view.addSubview(ticketSearchFormView)
         view.addSubview(serviceMenuView)
     }
     
     private func setupLayout() {
-        serviceMenuView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(-50) // 네비바 나오면 수정!
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(260)
+            $0.height.equalTo(23)
+        }
+        
+        ticketSearchFormView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(16.5)
+            $0.leading.trailing.equalToSuperview().inset(16)
+        }
+        
+        serviceMenuView.snp.makeConstraints {
+            $0.top.equalTo(ticketSearchFormView.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide).inset(16)
+            $0.height.equalTo(280)
         }
     }
     
