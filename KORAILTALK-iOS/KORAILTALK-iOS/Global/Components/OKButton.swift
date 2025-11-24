@@ -13,7 +13,7 @@ import Then
 final class OKButton: UIButton {
     private let textLabel = UILabel()
     
-    var isCheckd: Bool = false {
+    override var isSelected: Bool {
         didSet {
             updateStyle()
         }
@@ -58,11 +58,11 @@ final class OKButton: UIButton {
         
     @objc
     func buttonTapped() {
-        self.isCheckd.toggle()
+        self.isSelected.toggle()
     }
     
     private func updateStyle() {
-        if isCheckd {
+        if isSelected {
             self.backgroundColor = .primary300
         }else {
             self.backgroundColor = .gray300
