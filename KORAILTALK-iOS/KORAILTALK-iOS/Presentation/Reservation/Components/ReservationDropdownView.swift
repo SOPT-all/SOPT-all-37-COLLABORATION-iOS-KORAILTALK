@@ -128,6 +128,7 @@ final class ReservationDropdownView: UIView {
         
         containerView.snp.makeConstraints {
             $0.leading.top.trailing.equalToSuperview()
+            $0.bottom.lessThanOrEqualToSuperview()
         }
         
         headerStackView.snp.makeConstraints {
@@ -246,5 +247,4 @@ extension ReservationDropdownView: UITableViewDelegate {
         onSelect?(value)
     }
 }
-
 
