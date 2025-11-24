@@ -195,6 +195,16 @@ final class ReservationDropdownView: UIView {
             
         }
     }
+    func didselectedItem(index: Int) {
+        guard let titleText =  titleLabel.text else {
+            return
+        }
+        let currentTitle = titleText
+        let selectedItem = items[index]
+        items[index] = currentTitle
+        configure(placeholder: selectedItem, items: items)
+        setExpanded(false)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -229,6 +239,7 @@ extension ReservationDropdownView: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath) {
         selectedIndex = indexPath.row
+        didselectedItem(index: indexPath.row)
         tableView.reloadData()
         
         let value = items[indexPath.row]
