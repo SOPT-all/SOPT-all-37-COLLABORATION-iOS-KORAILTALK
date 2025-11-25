@@ -49,7 +49,7 @@ final class OKButton: UIButton {
     
     private func setupButton() {
         updateStyle()
-        self.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+//        self.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
         
     @objc

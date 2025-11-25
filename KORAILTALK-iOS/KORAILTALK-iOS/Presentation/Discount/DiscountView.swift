@@ -35,7 +35,7 @@ final class DiscountView: BaseView {
     var veteransTextField = UITextField().then{
         $0.font = .body1_r_16
         $0.textColor = .gray400
-        $0.placeholder = "보훈번호 9자리"
+        $0.placeholder = "보훈번호 8자리"
         $0.keyboardType = .numberPad
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.gray200.cgColor
@@ -74,7 +74,7 @@ final class DiscountView: BaseView {
         $0.layer.cornerRadius = 8
         $0.addPadding()
     }
-    private let checkButton = OKButton()
+    var checkButton = OKButton()
     
     private let targetLabel = UILabel().then {
         $0.text = "적용 대상"
@@ -87,7 +87,7 @@ final class DiscountView: BaseView {
         $0.placeholder = "적용할 승객 선택"
         $0.textAlignment = .left
     }
-    private let agreecheckboxButton = CheckBox()
+    lazy var agreecheckboxButton = CheckBox()
     private let agreeLabel = UILabel().then {
         $0.text = "개인정보 수집 및 이용 동의"
         $0.font = .body1_r_16
