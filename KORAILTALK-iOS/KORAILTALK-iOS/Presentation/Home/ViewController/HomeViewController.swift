@@ -44,11 +44,13 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupHierarchy() {
-        view.addSubview(headerBackgroundView)
-        view.addSubview(navBar)
-        view.addSubview(titleLabel)
-        view.addSubview(ticketSearchFormView)
-        view.addSubview(serviceMenuView)
+        view.addSubviews(
+            headerBackgroundView,
+            navBar,
+            titleLabel,
+            ticketSearchFormView,
+            serviceMenuView
+        )
     }
     
     private func setupLayout() {
