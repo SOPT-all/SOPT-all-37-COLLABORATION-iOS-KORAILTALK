@@ -35,9 +35,7 @@ final class CheckModalView: BaseView {
     }
     
     // MARK: - Init
-    private let defaultSize = CGSize(width: 304, height: 148)
     override init(frame: CGRect){
-        let frame = CGRect(origin: .zero, size: defaultSize)
         super.init(frame: frame)
         setupUI()
     }
