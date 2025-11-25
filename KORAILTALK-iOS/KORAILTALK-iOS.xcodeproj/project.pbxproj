@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A43A959E2ED5B42A005322B1 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A43A959D2ED5B42A005322B1 /* Config.xcconfig */; };
 		A4FC95A82ECA472A000B1F48 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = A4FC95A72ECA472A000B1F48 /* Then */; };
 		A4FC95AB2ECA4736000B1F48 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A4FC95AA2ECA4736000B1F48 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A40143152EC9FB4D00D174C4 /* KORAILTALK-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KORAILTALK-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A43A959C2ED5B41D005322B1 /* KORAILTALK-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KORAILTALK-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A43A959D2ED5B42A005322B1 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,17 +54,10 @@
 		A401430C2EC9FB4D00D174C4 = {
 			isa = PBXGroup;
 			children = (
+				A43A959D2ED5B42A005322B1 /* Config.xcconfig */,
 				A40143172EC9FB4D00D174C4 /* KORAILTALK-iOS */,
-				A40143162EC9FB4D00D174C4 /* Products */,
+				A43A959C2ED5B41D005322B1 /* KORAILTALK-iOS.app */,
 			);
-			sourceTree = "<group>";
-		};
-		A40143162EC9FB4D00D174C4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A40143152EC9FB4D00D174C4 /* KORAILTALK-iOS.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -89,7 +84,7 @@
 				A4FC95AA2ECA4736000B1F48 /* SnapKit */,
 			);
 			productName = "KORAILTALK-iOS";
-			productReference = A40143152EC9FB4D00D174C4 /* KORAILTALK-iOS.app */;
+			productReference = A43A959C2ED5B41D005322B1 /* KORAILTALK-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -121,7 +116,7 @@
 				A4FC95A92ECA4736000B1F48 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = A40143162EC9FB4D00D174C4 /* Products */;
+			productRefGroup = A401430C2EC9FB4D00D174C4;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -135,6 +130,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A43A959E2ED5B42A005322B1 /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +149,7 @@
 /* Begin XCBuildConfiguration section */
 		A40143292EC9FB4F00D174C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A43A959D2ED5B42A005322B1 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -186,6 +183,7 @@
 		};
 		A401432A2EC9FB4F00D174C4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A43A959D2ED5B42A005322B1 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -219,6 +217,7 @@
 		};
 		A401432B2EC9FB4F00D174C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A43A959D2ED5B42A005322B1 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -283,6 +282,7 @@
 		};
 		A401432C2EC9FB4F00D174C4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A43A959D2ED5B42A005322B1 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
