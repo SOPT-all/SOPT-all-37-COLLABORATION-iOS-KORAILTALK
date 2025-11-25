@@ -26,13 +26,13 @@ final class DiscountView: BaseView {
         $0.configure(title: "현역병 할인")
     }
     
-    let veteransLabel = UILabel().then{
+    private let veteransLabel = UILabel().then{
         $0.font = .sub3_m_16
         $0.textColor = .mainBlack
         $0.text = "보훈 번호"
         $0.textAlignment = .left
     }
-    let veteransTextField = UITextField().then{
+    var veteransTextField = UITextField().then{
         $0.font = .body1_r_16
         $0.textColor = .gray400
         $0.placeholder = "보훈번호 9자리"
@@ -50,7 +50,7 @@ final class DiscountView: BaseView {
         $0.textColor = .mainBlack
         $0.textAlignment = .left
     }
-    private let passwordTextField = UITextField().then {
+    var passwordTextField = UITextField().then {
         $0.placeholder = "숫자 4자리"
         $0.font = .body1_r_16
         $0.textColor = .gray400
@@ -66,7 +66,7 @@ final class DiscountView: BaseView {
         $0.font = .body1_r_16
         $0.textColor = .mainBlack
     }
-    private let birthTextField = UITextField().then {
+    var birthTextField = UITextField().then {
         $0.placeholder = "생년월일 6자리"
         $0.font = .body1_r_16
         $0.textColor = .gray400
@@ -84,7 +84,7 @@ final class DiscountView: BaseView {
         $0.font = .body1_r_16
         $0.textColor = .mainBlack
     }
-    private let targetTextField = UITextField().then{//드롭다운으로 교체할 것임!
+    var targetTextField = UITextField().then{//드롭다운으로 교체할 것임!
         $0.font = .body1_r_16
         $0.textColor = .gray400
         $0.placeholder = "적용할 승객 선택"
