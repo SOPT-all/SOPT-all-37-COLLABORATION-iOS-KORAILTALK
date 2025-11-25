@@ -50,14 +50,14 @@ final class ReservationDropdownView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUI()
-        setSytle()
+        setStyle()
         setLayout()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setUI()
-        setSytle()
+        setStyle()
         setLayout()
     }
 
@@ -73,7 +73,7 @@ final class ReservationDropdownView: UIView {
     
     // MARK: - SetStyle
     
-    private func setSytle() {
+    private func setStyle() {
         containerView.do {
                 $0.backgroundColor = .mainWhite
                 $0.layer.cornerRadius = 4
@@ -100,16 +100,16 @@ final class ReservationDropdownView: UIView {
         
         tableView.do {
             $0.isScrollEnabled = false
+            $0.separatorColor = .gray100
             $0.separatorStyle = .singleLine
             $0.rowHeight = 40
             $0.isHidden = true
             $0.dataSource = self
+            $0.separatorInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
             $0.delegate = self
-            $0.register(ReservationDropdownCell.self, forCellReuseIdentifier: ReservationDropdownCell.reuseIdentifier)
             $0.layoutMargins = .zero
             $0.cellLayoutMarginsFollowReadableWidth = false
-            $0.separatorInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
-            $0.separatorColor = .gray100
+            $0.register(ReservationDropdownCell.self, forCellReuseIdentifier: ReservationDropdownCell.reuseIdentifier)
         }
         
         headerStackView.do {
