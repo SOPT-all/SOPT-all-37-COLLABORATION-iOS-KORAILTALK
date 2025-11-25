@@ -4,10 +4,8 @@ import SnapKit
 import Then
 
 final class DiscountViewController: UIViewController, UITextFieldDelegate {
-
-    private let discountView = DiscountView()
     
-    private var validVeteranNumber = "12-345678"
+    private let discountView = DiscountView()
     
     
     override func viewDidLoad() {
@@ -16,6 +14,8 @@ final class DiscountViewController: UIViewController, UITextFieldDelegate {
         setupUI()
         
         discountView.veteransTextField.delegate = self
+        discountView.passwordTextField.delegate = self
+        discountView.birthTextField.delegate = self
     }
     
     private func setupUI() {
@@ -27,40 +27,45 @@ final class DiscountViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - UITextFieldDelegate
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        guard textField == discountView.veteransTextField else { return true }
-        let currentText = textField.text ?? ""
-        let nsString = currentText as NSString
-        let newText = nsString.replacingCharacters(in: range, with: string)
-            .replacingOccurrences(of: "-", with: "")
+        
         let allowedCharacters = CharacterSet.decimalDigits
         if string.rangeOfCharacter(from: allowedCharacters.inverted) != nil && !string.isEmpty {
             return false
         }
-        if newText.count > 8 {
+        
+        if textField == discountView.veteransTextField{
+            let currentText = textField.text ?? ""
+            let nsString = currentText as NSString
+            let newText = nsString.replacingCharacters(in: range, with: string)
+                .replacingOccurrences(of: "-", with: "")
+            if newText.count > 8 {
+                return false
+            }
+            var formattedText = ""
+            for (index, char) in newText.enumerated() {
+                if index == 2 { formattedText += "-" }
+                formattedText.append(char)
+            }
+            textField.text = formattedText
             return false
+        }        
+        else if textField == discountView.passwordTextField {
+            let allowedCharacters = CharacterSet.decimalDigits
+            let currentText = textField.text ?? ""
+            let nsString = currentText as NSString
+            let newText = nsString.replacingCharacters(in: range, with: string)
+            return newText.count <= 4 && string.rangeOfCharacter(from: allowedCharacters.inverted) == nil
         }
-        var formattedText = ""
-        for (index, char) in newText.enumerated() {
-            if index == 2 { formattedText += "-" }
-            formattedText.append(char)
+        else if textField == discountView.birthTextField {
+            let currentText = textField.text ?? ""
+            let nsString = currentText as NSString
+            let newText = nsString.replacingCharacters(in: range, with: string)
+            return newText.count <= 6 && string.rangeOfCharacter(from: allowedCharacters.inverted) == nil
         }
-        textField.text = formattedText
-        return false
+        
+        return true
     }
-    
-    
-    
-    
-    
-    
-    
-
-//        @objc private func checkDiscount() {
-//            let text = discountView.veteransTextField.text ?? ""
-//            print("입력된 보훈 번호: \(text)")
-//            // 여기서 추가 검증 로직도 가능
-//        }
-    }
+}
 
 
 #Preview{

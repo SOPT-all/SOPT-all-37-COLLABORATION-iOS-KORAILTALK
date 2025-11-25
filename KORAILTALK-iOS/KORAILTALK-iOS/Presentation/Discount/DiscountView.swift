@@ -36,7 +36,6 @@ final class DiscountView: BaseView {
         $0.font = .body1_r_16
         $0.textColor = .gray400
         $0.placeholder = "보훈번호 9자리"
-        $0.textAlignment = .left
         $0.keyboardType = .numberPad
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.gray200.cgColor
@@ -54,7 +53,6 @@ final class DiscountView: BaseView {
         $0.placeholder = "숫자 4자리"
         $0.font = .body1_r_16
         $0.textColor = .gray400
-        $0.borderStyle = .roundedRect
         $0.keyboardType = .numberPad
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.gray200.cgColor
@@ -70,7 +68,6 @@ final class DiscountView: BaseView {
         $0.placeholder = "생년월일 6자리"
         $0.font = .body1_r_16
         $0.textColor = .gray400
-        $0.borderStyle = .roundedRect
         $0.keyboardType = .numberPad
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.gray200.cgColor
@@ -96,17 +93,11 @@ final class DiscountView: BaseView {
         $0.font = .body1_r_16
         $0.textColor = .mainBlack
     }
-    
-    
-    
-    
-    
     private lazy var veteransStack = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
         $0.addArrangedSubviews(veteransLabel, veteransTextField)
     }
-    
     private lazy var passwordStack = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
@@ -187,6 +178,7 @@ final class DiscountView: BaseView {
         }
         birthTextField.snp.makeConstraints {
             $0.leading.equalTo(birthLabel.snp.leading).offset(115)
+            $0.height.equalTo(36)
         }
         checkButton.snp.makeConstraints{
             $0.width.equalTo(56)
