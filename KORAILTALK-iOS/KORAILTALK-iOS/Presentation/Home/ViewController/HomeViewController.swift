@@ -16,6 +16,9 @@ final class HomeViewController: BaseViewController {
     private let menuData = ServiceMenuModel.mockData
     
     // MARK: - UI Components
+    private let headerBackgroundView = UIView().then {
+        $0.backgroundColor = .primary700
+    }
     private let navBar = NavigationBar(style: .home)
     private let titleLabel = UILabel().then {
         $0.font = .head3_sb_18
@@ -41,6 +44,7 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupHierarchy() {
+        view.addSubview(headerBackgroundView)
         view.addSubview(navBar)
         view.addSubview(titleLabel)
         view.addSubview(ticketSearchFormView)
@@ -48,8 +52,16 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupLayout() {
+        headerBackgroundView.snp.makeConstraints{
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(35)
+        }
+        
         navBar.snp.makeConstraints{
-            $0.top.leading.trailing.equalToSuperview()
+            $0.top.equalTo(headerBackgroundView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(35)
         }
         
         titleLabel.snp.makeConstraints {
