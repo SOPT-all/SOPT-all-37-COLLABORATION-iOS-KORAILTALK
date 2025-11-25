@@ -62,7 +62,7 @@ final class ReservationModal: BaseView {
     
     private let buttonStack = UIStackView().then {
         $0.axis = .horizontal
-        $0.spacing = 8
+        $0.spacing = 12
         $0.distribution = .fillEqually
     }
 
@@ -152,13 +152,27 @@ final class ReservationModal: BaseView {
     // MARK: - SeatButton toggle
     @objc private func selectGeneralSeat() {
         guard !generalSeatView.isDisabled else { return }
-        generalSeatView.isSelected.toggle()
-        specialSeatView.isDisabled = generalSeatView.isSelected
+
+        if generalSeatView.isSelected {
+            generalSeatView.isSelected = false
+            specialSeatView.isDisabled = false
+        } else {
+            generalSeatView.isSelected = true
+            specialSeatView.isSelected = false
+            specialSeatView.isDisabled = true
+        }
     }
 
     @objc private func selectSpecialSeat() {
         guard !specialSeatView.isDisabled else { return }
-        specialSeatView.isSelected.toggle()
-        generalSeatView.isDisabled = specialSeatView.isSelected
+
+        if specialSeatView.isSelected {
+            specialSeatView.isSelected = false
+            generalSeatView.isDisabled = false
+        } else {
+            specialSeatView.isSelected = true
+            generalSeatView.isSelected = false
+            generalSeatView.isDisabled = true
+        }
     }
 }
