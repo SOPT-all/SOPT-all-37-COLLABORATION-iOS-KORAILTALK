@@ -9,7 +9,7 @@ import UIKit
 
 final class TrainNameLabel: UILabel {
     
-    let trainName: TrainNameType
+    var trainName: TrainNameType
     var isDisabled: Bool{
         didSet {
             self.setStyle()
