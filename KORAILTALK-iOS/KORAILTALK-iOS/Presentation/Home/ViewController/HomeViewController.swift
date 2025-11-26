@@ -15,6 +15,8 @@ final class HomeViewController: BaseViewController {
     
     private let menuData = ServiceMenuModel.mockData
     
+    private let homeService = HomeInformationService()
+    
     // MARK: - UI Components
     private let headerBackgroundView = UIView().then {
         $0.backgroundColor = .primary700
@@ -28,6 +30,11 @@ final class HomeViewController: BaseViewController {
     private let ticketSearchFormView = TicketSearchFormView()
     private let serviceMenuView = ServiceMenuView()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        fetchHomeData()
+    }
+    
     override func setView() {
         setupStyle()
         setupHierarchy()
@@ -37,6 +44,20 @@ final class HomeViewController: BaseViewController {
     override func setDelegate() {
         serviceMenuView.collectionView.dataSource = self
         serviceMenuView.collectionView.delegate = self
+    }
+    
+    private func fetchHomeData() {
+        Task {
+            do {
+                let data = try await homeService.getHomeInformation()
+                ticketSearchFormView.configure(with: data)
+                
+                print("홈 데이터 로드 성공: \(data)")
+                
+            } catch {
+                print("홈 데이터 로드 실패: \(error)")
+            }
+        }
     }
     
     private func setupStyle() {

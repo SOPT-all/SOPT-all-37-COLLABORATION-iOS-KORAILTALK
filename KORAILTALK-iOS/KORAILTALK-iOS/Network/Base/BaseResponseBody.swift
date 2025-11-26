@@ -8,7 +8,7 @@
 import Foundation
 
 struct BaseResponseBody<T: ResponseModelType>: ResponseModelType {
-    let code: Int
+    let status: Int
     let message: String
     let data: T
 }
