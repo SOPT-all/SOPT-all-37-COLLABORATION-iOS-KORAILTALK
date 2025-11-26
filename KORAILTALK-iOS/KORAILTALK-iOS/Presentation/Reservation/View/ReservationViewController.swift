@@ -22,12 +22,12 @@ final class ReservationViewController: BaseViewController {
     private let tagScrollView = UIScrollView()
     
     private let seatDropdown = ReservationDropdownView()
-    private let serviceDropdow = ReservationDropdownView()
+    private let serviceDropdown = ReservationDropdownView()
     private let dropdownStackView = UIStackView()
     private let resultLabel = UILabel()
     
-    private let reservationListview = ReservationListView()
-
+    private let reservationListView = ReservationListView()
+    
     //MARK: - SetView
     
     override func setView() {
@@ -44,7 +44,7 @@ final class ReservationViewController: BaseViewController {
         view.addSubviews(
             navBarBackgroundView,
             navBar,
-            reservationListview,
+            reservationListView,
             reservationInfoView,
             tagScrollView,
             dropdownStackView,
@@ -72,7 +72,7 @@ final class ReservationViewController: BaseViewController {
             $0.distribution = .fillProportionally
             $0.alignment = .center
             
-            }
+        }
         
         tagScrollView.do {
             $0.showsHorizontalScrollIndicator = false
@@ -83,12 +83,12 @@ final class ReservationViewController: BaseViewController {
             $0.configure(placeholder: "전체", items: ["일반실", "특실"])
         }
         
-        serviceDropdow.do {
+        serviceDropdown.do {
             $0.configure(placeholder: "직통", items: ["환승"])
         }
         
         dropdownStackView.do {
-            $0.addArrangedSubviews(seatDropdown, serviceDropdow)
+            $0.addArrangedSubviews(seatDropdown, serviceDropdown)
             $0.axis = .horizontal
             $0.spacing = 8
             
@@ -101,7 +101,7 @@ final class ReservationViewController: BaseViewController {
             $0.textAlignment = .center
         }
         
-        reservationListview.do {
+        reservationListView.do {
             $0.setTrainSchedule(TrainSchedule.mockData)
         }
         
@@ -112,14 +112,14 @@ final class ReservationViewController: BaseViewController {
     
     func setLayout() {
         navBarBackgroundView.snp.makeConstraints {
-                    $0.top.leading.trailing.equalToSuperview()
-                    $0.bottom.equalTo(navBar.snp.top)
-                }
-
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(navBar.snp.top)
+        }
+        
         navBar.snp.makeConstraints {
-                    $0.top.equalToSuperview().offset(50)
-                    $0.leading.trailing.equalToSuperview()
-                }
+            $0.top.equalToSuperview().offset(50)
+            $0.leading.trailing.equalToSuperview()
+        }
         reservationInfoView.snp.makeConstraints {
             $0.top.equalTo(navBar.snp.bottom)
             $0.trailing.leading.equalToSuperview()
@@ -130,13 +130,13 @@ final class ReservationViewController: BaseViewController {
             $0.top.equalTo(reservationInfoView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(52)
-        
+            
         }
         tagStackView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
-        
+            
         }
         
         dropdownStackView.snp.makeConstraints {
@@ -152,12 +152,11 @@ final class ReservationViewController: BaseViewController {
             $0.trailing.equalToSuperview().inset(16)
         }
         
-        reservationListview.snp.makeConstraints {
+        reservationListView.snp.makeConstraints {
             $0.top.equalTo(resultLabel.snp.bottom).offset(10+16)
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.bottom.lessThanOrEqualToSuperview()
         }
-    
+        
     }
     
     //MARK: - SetDelegate
@@ -165,7 +164,7 @@ final class ReservationViewController: BaseViewController {
     override func setDelegate() {
         
     }
-            
+    
     //MARK: - SetAddTaget
     
     override func setAddTarget() {
