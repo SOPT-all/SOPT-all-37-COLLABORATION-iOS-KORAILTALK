@@ -65,6 +65,10 @@ final class CheckoutViewController: BaseViewController {
     
     private let veteranDiscountView = DiscountView()
     
+    private let veteranTargetApplyView = DiscountApplyView()
+    
+    private let personalInfoAgreementView = PersonalInfoAgreementView()
+    
     private let guardianSectionHeaderView = SectionHeaderView().then {
         $0.configure(title: "중증 보호자 할인", rightText: "적용대상 없음")
     }
@@ -123,6 +127,8 @@ final class CheckoutViewController: BaseViewController {
             discountApplyView,
             veteranSectionHeaderView,
             veteranDiscountView,
+            veteranTargetApplyView,
+            personalInfoAgreementView,
             guardianSectionHeaderView,
             soldierSectionHeaderView,
             soldierDiscountApplyView,
@@ -138,7 +144,10 @@ final class CheckoutViewController: BaseViewController {
         )
         
         discountApplyView.configureForCouponSection()
-        soldierDiscountApplyView.configureForTargetOnly()
+        
+        veteranTargetApplyView.configureForTargetOnly(title: "적용 대상")
+        
+        soldierDiscountApplyView.configureForTargetOnly(title: "적용 대상")
     }
     
     func setLayout() {
@@ -220,8 +229,18 @@ final class CheckoutViewController: BaseViewController {
             $0.leading.trailing.equalToSuperview()
         }
         
+        veteranTargetApplyView.snp.makeConstraints {
+            $0.top.equalTo(veteranDiscountView.snp.bottom).inset(12)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        personalInfoAgreementView.snp.makeConstraints {
+            $0.top.equalTo(veteranTargetApplyView.snp.bottom).inset(12)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
         guardianSectionHeaderView.snp.makeConstraints {
-            $0.top.equalTo(veteranDiscountView.snp.bottom)
+            $0.top.equalTo(personalInfoAgreementView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
         
@@ -259,6 +278,12 @@ final class CheckoutViewController: BaseViewController {
         )
         
         discountApplyView.targetButton.addTarget(
+            self,
+            action: #selector(didTapTargetButton),
+            for: .touchUpInside
+        )
+        
+        veteranTargetApplyView.targetButton.addTarget(
             self,
             action: #selector(didTapTargetButton),
             for: .touchUpInside
@@ -326,6 +351,7 @@ final class CheckoutViewController: BaseViewController {
         
         vc.onSelect = { [weak self] selected in
             self?.discountApplyView.targetButton.updateSelected(text: selected)
+            self?.veteranTargetApplyView.targetButton.updateSelected(text: selected)
         }
         
         present(vc, animated: true)
@@ -362,3 +388,8 @@ final class CheckoutViewController: BaseViewController {
         }
     }
 }
+
+#Preview {
+    CheckoutViewController(reservationId: 17)
+}
+
