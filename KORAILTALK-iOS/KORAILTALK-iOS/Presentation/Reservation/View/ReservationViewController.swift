@@ -28,9 +28,13 @@ final class ReservationViewController: BaseViewController {
     
     private let reservationListView = ReservationListView()
     
+    private let reservationService: ReservationListServiceProtocol = ReservationListService()
+    
+    
     //MARK: - SetView
     
     override func setView() {
+        fetchTrainReservation()
         createButtons()
         setUI()
         setStyle()
@@ -99,10 +103,6 @@ final class ReservationViewController: BaseViewController {
             $0.textColor = .mainBlack
             $0.text = "결과(12)"
             $0.textAlignment = .center
-        }
-        
-        reservationListView.do {
-            $0.setTrainSchedule(TrainSchedule.mockData)
         }
         
         
@@ -181,6 +181,23 @@ final class ReservationViewController: BaseViewController {
         }
     }
     
+    private func fetchTrainReservation() {
+        Task {
+            do {
+                let trainSearchResult = try await reservationService.getReservationList()
+
+                await MainActor.run {
+                    self.configure(with: trainSearchResult)
+                }
+            } catch {
+                print("ReservationView 리스트 호출 실패:", error.localizedDescription)
+            }
+        }
+    }
     
+    private func configure(with trainSearchResult: TrainSearchResult) {
+        reservationListView.setTrainSchedule(trainSearchResult.trainList)
+    }
     
 }
+
