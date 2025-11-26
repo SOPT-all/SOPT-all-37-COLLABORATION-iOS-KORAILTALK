@@ -12,7 +12,7 @@ struct HomeInformation {
     let destination: String
 }
 
-struct HomeInformationResponseDTO {
+struct HomeInformationResponseDTO : ResponseModelType{
     let origin: String
     let destination: String
 }

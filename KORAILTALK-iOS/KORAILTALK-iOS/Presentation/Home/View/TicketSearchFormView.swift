@@ -121,4 +121,9 @@ final class TicketSearchFormView: BaseView{
         switchButton.rotateAnimation()
         switchStations()
     }
+    
+    func configure(with data: HomeInformation) {
+        departureRow.updateStation(data.origin)
+        arrivalRow.updateStation(data.destination)
+    }
 }
