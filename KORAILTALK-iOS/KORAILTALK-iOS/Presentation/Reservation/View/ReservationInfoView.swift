@@ -119,7 +119,7 @@ final class ReservationInfoView: BaseView {
     
     override func setLayout() {
         routeStackView.snp.makeConstraints{
-            $0.leading.top.equalToSuperview()
+            $0.leading.top.equalToSuperview().offset(16)
             $0.trailing.lessThanOrEqualToSuperview()
         }
         
@@ -137,7 +137,7 @@ final class ReservationInfoView: BaseView {
         
         checkBoxStackView.snp.makeConstraints {
             $0.top.equalTo(reservationDetailLabel.snp.bottom).offset(27)
-            $0.trailing.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
             
         }
