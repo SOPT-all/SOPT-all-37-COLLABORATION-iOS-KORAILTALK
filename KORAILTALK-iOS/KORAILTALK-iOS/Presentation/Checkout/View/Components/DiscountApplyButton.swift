@@ -20,6 +20,7 @@ final class DiscountApplyButton: UIControl {
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.gray200.cgColor
         $0.clipsToBounds = true
+        $0.isUserInteractionEnabled = false
     }
     
     private let titleLabel = UILabel().then {
