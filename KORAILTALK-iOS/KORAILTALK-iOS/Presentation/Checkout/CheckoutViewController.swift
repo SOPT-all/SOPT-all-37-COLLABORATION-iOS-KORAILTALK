@@ -251,6 +251,7 @@ final class CheckoutViewController: BaseViewController {
     private func handleCancelReservation() async {
         do {
             try await cancelReservationService.cancelReservation(reservationId: reservationId)
+            //  TODO: 홈화면으로 이동 로직 추가
             print("✅ 예약 취소 성공")
             navigationController?.popViewController(animated: true)
         } catch {
