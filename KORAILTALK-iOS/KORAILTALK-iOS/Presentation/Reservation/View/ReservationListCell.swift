@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-class ReservationListCell: UICollectionViewCell,ReuseIdentifiable {
+final class ReservationListCell: UICollectionViewCell,ReuseIdentifiable {
     
     //MARK: - UI
     
