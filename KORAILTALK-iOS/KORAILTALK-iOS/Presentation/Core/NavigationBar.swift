@@ -11,6 +11,13 @@ import SnapKit
 import Then
 
 final class NavigationBar: UIView {
+    
+    var onTapBack: (() -> Void)?
+    var onTapReload: (() -> Void)?
+    var onTapCancel: (() -> Void)?
+    var onTapHamburger: (() -> Void)?
+    var onTapTranslate: (() -> Void)?
+    
     private let backButton = UIButton(type: .system)
     private let titleLabel = UILabel()
     
@@ -30,7 +37,7 @@ final class NavigationBar: UIView {
     
     private let fixedHeight: CGFloat = 44
     
-    override var intrinsicContentSize: CGSize{
+    override var intrinsicContentSize: CGSize {
         return CGSize(width: UIView.noIntrinsicMetric, height: fixedHeight)
     }
     
@@ -40,18 +47,22 @@ final class NavigationBar: UIView {
         configureContents(for: style)
         setupLayout(for: style)
     }
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
+        configureContents(for: .home)
         setupLayout(for: .home)
     }
     
     //MARK: - UI
+    
     private func setupUI() {
         backgroundColor = .primary700
+        
         backButton.setImage(UIImage(named: "back"), for: .normal)
-                backButton.tintColor = .white
-                
+        backButton.tintColor = .white
+        
         reloadButton.setImage(UIImage(named: "reload"), for: .normal)
         reloadButton.tintColor = .white
         
@@ -62,14 +73,22 @@ final class NavigationBar: UIView {
         hamburgerButton.tintColor = .white
         
         logoImageView.contentMode = .scaleAspectFit
-                
+        
         titleLabel.font = .sub3_m_16
         titleLabel.textColor = .white
         titleLabel.textAlignment = .center
+        
+        backButton.addTarget(self, action: #selector(didTapBack), for: .touchUpInside)
+        reloadButton.addTarget(self, action: #selector(didTapReload), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(didTapCancel), for: .touchUpInside)
+        hamburgerButton.addTarget(self, action: #selector(didTapHamburger), for: .touchUpInside)
+        
+        translateImageView.isUserInteractionEnabled = true
+        let translateTap = UITapGestureRecognizer(target: self, action: #selector(didTapTranslate))
+        translateImageView.addGestureRecognizer(translateTap)
     }
     
     private func configureContents(for style: NavigationBarStyle) {
-        
         subviews.forEach { $0.removeFromSuperview() }
         rightWrap.subviews.forEach { $0.removeFromSuperview() }
         
@@ -78,96 +97,120 @@ final class NavigationBar: UIView {
             addSubview(logoImageView)
             addSubview(rightWrap)
             rightWrap.addSubviews(translateImageView, hamburgerButton)
+            
         case .payment:
             addSubview(backButton)
             addSubview(titleLabel)
             addSubview(rightWrap)
             titleLabel.text = "결제"
             rightWrap.addSubview(cancelButton)
+            
         case .trainLookup:
             addSubview(backButton)
             addSubview(titleLabel)
-            addSubview(rightWrap)
+            addSubview(reloadButton)
+            addSubview(hamburgerButton)
             titleLabel.text = "열차 조회"
-            rightWrap.addSubviews(reloadButton, hamburgerButton)
         }
     }
     
     //MARK: - Layout
+    
     private func setupLayout(for style: NavigationBarStyle) {
         switch style {
-            case .home:
-                logoImageView.snp.makeConstraints {
-                    $0.leading.equalToSuperview().offset(12)
-                    $0.centerY.equalToSuperview()
-                    $0.width.equalTo(82)
-                    $0.height.equalTo(20)
-                }
-                rightWrap.snp.makeConstraints {
-                    $0.trailing.equalToSuperview()
-                    $0.centerY.equalToSuperview()
-                }
-                [translateImageView, hamburgerButton].forEach {
-                    $0.snp.makeConstraints {
-                        $0.centerY.equalToSuperview()
-                        $0.height.equalTo(fixedHeight)
-                        $0.width.equalTo(fixedHeight)
-                    }
-                }
-                translateImageView.snp.makeConstraints {
-                    $0.trailing.equalTo(hamburgerButton.snp.leading)
-                }
-                hamburgerButton.snp.makeConstraints {
-                    $0.trailing.equalToSuperview()
-                }
-            case .payment:
-                backButton.snp.makeConstraints {
-                    $0.leading.equalToSuperview()
-                    $0.centerY.equalToSuperview()
-                    $0.size.equalTo(fixedHeight)
-                }
-                titleLabel.snp.makeConstraints {
-                    $0.center.equalToSuperview()
-                }
-                rightWrap.snp.makeConstraints {
-                    $0.trailing.equalToSuperview()
+        case .home:
+            logoImageView.snp.makeConstraints {
+                $0.leading.equalToSuperview().offset(12)
+                $0.centerY.equalToSuperview()
+                $0.width.equalTo(82)
+                $0.height.equalTo(20)
+            }
+            rightWrap.snp.makeConstraints {
+                $0.trailing.equalToSuperview()
+                $0.top.bottom.equalToSuperview()
+            }
+            [translateImageView, hamburgerButton].forEach {
+                $0.snp.makeConstraints {
                     $0.centerY.equalToSuperview()
                     $0.height.equalTo(fixedHeight)
                     $0.width.equalTo(fixedHeight)
-                }
-                cancelButton.snp.makeConstraints {
-                    $0.centerY.equalToSuperview()
-                    $0.height.equalTo(fixedHeight)
-                    $0.width.equalTo(fixedHeight)
-                    $0.trailing.equalToSuperview()
-                }
-            case .trainLookup:
-                backButton.snp.makeConstraints {
-                    $0.leading.equalToSuperview()
-                    $0.centerY.equalToSuperview()
-                    $0.size.equalTo(fixedHeight)
-                }
-                titleLabel.snp.makeConstraints {
-                    $0.center.equalToSuperview()
-                }
-                rightWrap.snp.makeConstraints {
-                    $0.trailing.equalToSuperview()
-                    $0.centerY.equalToSuperview()
-                }
-                [reloadButton, hamburgerButton].forEach {
-                    $0.snp.makeConstraints { make in
-                        make.centerY.equalToSuperview()
-                        make.height.equalTo(fixedHeight)
-                        make.width.equalTo(fixedHeight)
-                    }
-                }
-                reloadButton.snp.makeConstraints {
-                    $0.trailing.equalTo(hamburgerButton.snp.leading)
-                }
-                hamburgerButton.snp.makeConstraints {
-                    $0.trailing.equalToSuperview()
                 }
             }
-        
+            translateImageView.snp.makeConstraints {
+                $0.trailing.equalTo(hamburgerButton.snp.leading)
+            }
+            hamburgerButton.snp.makeConstraints {
+                $0.trailing.equalToSuperview()
+            }
+            
+        case .payment:
+            backButton.snp.makeConstraints {
+                $0.leading.equalToSuperview()
+                $0.centerY.equalToSuperview()
+                $0.size.equalTo(fixedHeight)
+            }
+            titleLabel.snp.makeConstraints {
+                $0.center.equalToSuperview()
+            }
+            rightWrap.snp.makeConstraints {
+                $0.trailing.equalToSuperview()
+                $0.top.bottom.equalToSuperview()
+                $0.width.equalTo(fixedHeight)
+            }
+            cancelButton.snp.makeConstraints {
+                $0.centerY.equalToSuperview()
+                $0.height.equalTo(fixedHeight)
+                $0.width.equalTo(fixedHeight)
+                $0.trailing.equalToSuperview()
+            }
+            
+        case .trainLookup:
+            backButton.snp.makeConstraints {
+                $0.leading.equalToSuperview()
+                $0.centerY.equalToSuperview()
+                $0.size.equalTo(fixedHeight)
+            }
+            
+            titleLabel.snp.makeConstraints {
+                $0.center.equalToSuperview()
+            }
+            
+            reloadButton.snp.makeConstraints {
+                $0.centerY.equalToSuperview()
+                $0.height.equalTo(fixedHeight)
+                $0.width.equalTo(fixedHeight)
+                $0.trailing.equalTo(hamburgerButton.snp.leading)
+            }
+            
+            hamburgerButton.snp.makeConstraints {
+                $0.centerY.equalToSuperview()
+                $0.height.equalTo(fixedHeight)
+                $0.width.equalTo(fixedHeight)
+                $0.trailing.equalToSuperview()
+            }
+        }
+    }
+    
+    //MARK: - Actions
+    
+    @objc private func didTapBack() {
+        onTapBack?()
+    }
+    
+    @objc private func didTapReload() {
+        onTapReload?()
+    }
+    
+    @objc private func didTapCancel() {
+        onTapCancel?()
+    }
+    
+    @objc private func didTapHamburger() {
+        onTapHamburger?()
+    }
+    
+    @objc private func didTapTranslate() {
+        onTapTranslate?()
     }
 }
+
