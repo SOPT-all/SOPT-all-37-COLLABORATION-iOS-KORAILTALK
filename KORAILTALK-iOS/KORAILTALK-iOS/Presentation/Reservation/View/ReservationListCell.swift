@@ -68,7 +68,7 @@ class ReservationListCell: UICollectionViewCell {
     private func setStyle() {
         
         departureTimeLabel.do {
-            $0.font = .head1_m_30
+            $0.font = .head2_m_20
             $0.textColor = .mainBlack
             $0.textAlignment = .center
         }
@@ -78,7 +78,7 @@ class ReservationListCell: UICollectionViewCell {
         }
         
         arrivalTimeLabel.do {
-            $0.font = .head1_m_30
+            $0.font = .head2_m_20
             $0.textColor = .mainBlack
             $0.textAlignment = .center
         }
@@ -137,10 +137,12 @@ class ReservationListCell: UICollectionViewCell {
         
         let isEmptySeat = schedule.normalSeatStatus == nil && schedule.premiumSeatStatus == nil
         
+        
         traininfoView.configure(trainName: schedule.type, trainNumber: schedule.trailNumber, isDisabled: isEmptySeat)
         if isEmptySeat {
             layer.backgroundColor = UIColor.gray100.cgColor
         }
+        
         if let normal = schedule.normalSeatStatus {
             normalSeatStatus.isHidden = false
             normalSeatStatus.configure(seatType: .normal, seatStatus: normal)
