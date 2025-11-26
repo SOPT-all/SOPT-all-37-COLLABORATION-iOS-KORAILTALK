@@ -19,11 +19,8 @@ final class OKButton: UIButton {
         }
     }
     
-    private let fixedSize = CGSize(width: 56, height: 36)
-    
     override init(frame: CGRect){
-        let fixedFrame = CGRect(origin: frame.origin, size: fixedSize)
-        super.init(frame: fixedFrame)
+        super.init(frame: frame)
         setUI()
         setStyle()
         setLayout()
@@ -31,7 +28,6 @@ final class OKButton: UIButton {
     }
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.frame.size = fixedSize
         setupButton()
     }
     
@@ -53,7 +49,7 @@ final class OKButton: UIButton {
     
     private func setupButton() {
         updateStyle()
-        self.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+//        self.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
         
     @objc
