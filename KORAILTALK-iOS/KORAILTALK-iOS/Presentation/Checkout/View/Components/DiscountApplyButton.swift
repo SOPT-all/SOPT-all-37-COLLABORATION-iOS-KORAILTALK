@@ -42,12 +42,15 @@ final class DiscountApplyButton: UIControl {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
-        addTarget(self, action: #selector(didTap), for: .touchUpInside)
+        commonInit()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        commonInit()
+    }
+    
+    private func commonInit() {
         setupUI()
         addTarget(self, action: #selector(didTap), for: .touchUpInside)
     }
@@ -99,4 +102,3 @@ final class DiscountApplyButton: UIControl {
         }
     }
 }
-
