@@ -10,11 +10,11 @@ import UIKit
 import SnapKit
 import Then
 
-final class DiscountView: BaseView {
+final class DiscountView: BaseView, UITextFieldDelegate {
     
     // MARK: - UI
     
-    private let labelWidth: CGFloat = 100
+    private let labelWidth: CGFloat = 95
     
     private let veteransLabel = UILabel().then {
         $0.font = .sub3_m_16
@@ -94,6 +94,13 @@ final class DiscountView: BaseView {
         $0.addPadding()
     }
     
+    let checkButton = OKButton().then {
+        $0.isSelected = false
+        $0.isEnabled = false
+    }
+    
+    let agreecheckboxButton = CheckBox()
+    
     
     // MARK: - StackViews
     
@@ -115,7 +122,7 @@ final class DiscountView: BaseView {
         $0.axis = .horizontal
         $0.alignment = .fill
         $0.spacing = 8
-        $0.addArrangedSubviews(birthTextField)
+        $0.addArrangedSubviews(birthTextField, checkButton)
     }
     
     private lazy var birthRowStack = UIStackView().then {
@@ -136,8 +143,7 @@ final class DiscountView: BaseView {
         )
     }
     
-    
-    // MARK: - BaseView
+    private var didSetupTextFields = false
     
     override func setUI() {
         addSubview(mainStack)
@@ -157,6 +163,11 @@ final class DiscountView: BaseView {
             }
         }
         
+        checkButton.snp.makeConstraints { make in
+            make.width.equalTo(58)
+            make.height.equalTo(36)
+        }
+        
         mainStack.snp.makeConstraints {
             $0.top.equalToSuperview().inset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -167,6 +178,94 @@ final class DiscountView: BaseView {
             tf.setContentHuggingPriority(.defaultLow, for: .horizontal)
             tf.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         }
+        
+        checkButton.setContentHuggingPriority(.required, for: .horizontal)
+        checkButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if !didSetupTextFields {
+            didSetupTextFields = true
+            setupTextFields()
+        }
+    }
+    
+    
+    // MARK: - Setup
+    
+    private func setupTextFields() {
+        veteransTextField.delegate = self
+        passwordTextField.delegate = self
+        birthTextField.delegate = self
+        
+        veteransTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        birthTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+    }
+    
+    
+    // MARK: - UITextFieldDelegate
+    
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+        
+        let allowedCharacters = CharacterSet.decimalDigits
+        
+        if string.rangeOfCharacter(from: allowedCharacters.inverted) != nil && !string.isEmpty {
+            return false
+        }
+        
+        if textField == veteransTextField {
+            let currentText = textField.text ?? ""
+            let nsString = currentText as NSString
+            let newText = nsString.replacingCharacters(in: range, with: string)
+                .replacingOccurrences(of: "-", with: "")
+            
+            if newText.count > 8 { return false }
+            
+            var formattedText = ""
+            for (index, char) in newText.enumerated() {
+                if index == 2 { formattedText += "-" }
+                formattedText.append(char)
+            }
+            
+            textField.text = formattedText
+            return false
+        }
+        
+        if textField == passwordTextField {
+            let currentText = textField.text ?? ""
+            let nsString = currentText as NSString
+            let newText = nsString.replacingCharacters(in: range, with: string)
+            return newText.count <= 4
+        }
+        
+        if textField == birthTextField {
+            let currentText = textField.text ?? ""
+            let nsString = currentText as NSString
+            let newText = nsString.replacingCharacters(in: range, with: string)
+            return newText.count <= 6
+        }
+        
+        return true
+    }
+    
+    
+    // MARK: - Validation
+    
+    @objc
+    private func textFieldDidChange() {
+        let veteranValid = veteransTextField.text?.isValidVeteranNumber ?? false
+        let passwordValid = passwordTextField.text?.isValidPassword ?? false
+        let birthValid = birthTextField.text?.isValidBirth ?? false
+        
+        let allValid = veteranValid && passwordValid && birthValid
+        
+        checkButton.isSelected = allValid
+        checkButton.isEnabled = allValid
     }
 }
+
 

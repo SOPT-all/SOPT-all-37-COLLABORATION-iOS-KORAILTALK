@@ -14,6 +14,10 @@ final class PersonalInfoAgreementView: BaseView {
     
     let checkBoxButton = CheckBox()
     
+    var isAgreed: Bool {
+        checkBoxButton.isChecked
+    }
+    
     private let titleLabel = UILabel().then {
         $0.text = "개인정보 수집 및 이용 동의"
         $0.font = .body1_r_16
