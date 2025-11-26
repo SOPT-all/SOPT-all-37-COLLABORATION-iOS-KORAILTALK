@@ -151,7 +151,7 @@ class ReservationListCell: UICollectionViewCell {
         }
         
         if let premium = schedule.premiumSeatStatus {
-            normalSeatStatus.isHidden = false
+            premiumSeatStatus.isHidden = false
             premiumSeatStatus.configure(seatType: .premium, seatStatus: premium)
         } else {
             premiumSeatStatus.isHidden = true
