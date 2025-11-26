@@ -10,7 +10,7 @@ final class CheckBox: UIButton {
     var checkedImage = UIImage(named: "checkbox_on")
     var uncheckedImage = UIImage(named: "checkbox_off")
     
-    var isCheckd: Bool = false {
+    var isChecked: Bool = false {
         didSet {
             updateImage()
         }
@@ -36,11 +36,11 @@ final class CheckBox: UIButton {
     
     @objc
     func buttonTapped() {
-        self.isCheckd.toggle()
+        self.isChecked.toggle()
     }
     
     private func updateImage() {
-        if isCheckd {
+        if isChecked {
             self.setImage(checkedImage, for: .normal)
         }else {
             self.setImage(uncheckedImage, for: .normal)

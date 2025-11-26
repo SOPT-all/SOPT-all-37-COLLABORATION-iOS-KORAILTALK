@@ -12,22 +12,8 @@ import Then
 
 final class TrainInfoView: BaseView {
     
-    private let trainName: TrainNameType
-    private let trainNumber: String
-    private let isDisabled: Bool
     
-    init(trainName: TrainNameType, trainNumber: String, isDisabled: Bool) {
-        self.trainName = trainName
-        self.trainNumber = trainNumber
-        self.isDisabled = isDisabled
-        super.init(frame: .zero)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private lazy var trainNameLabel = TrainNameLabel(trainName: trainName, isDisabled: isDisabled)
+    private lazy var trainNameLabel = TrainNameLabel(trainName: .itxMaeum)
     private let trainNumberLabel = UILabel()
     private let trainInfoStackView = UIStackView()
     
@@ -37,7 +23,6 @@ final class TrainInfoView: BaseView {
     
     override func setStyle() {
         trainNumberLabel.do {
-            $0.text = trainNumber
             $0.font = .body4_m_14
             $0.textColor = .mainBlack
             $0.textAlignment = .center
@@ -55,6 +40,13 @@ final class TrainInfoView: BaseView {
         trainInfoStackView.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
+    }
+    
+    func configure(trainName: TrainNameType, trainNumber: String, isDisabled: Bool) {
+        trainNumberLabel.text = trainNumber
+        trainNameLabel.trainName = trainName
+        trainNameLabel.isDisabled = isDisabled
+        self.layoutIfNeeded()
     }
     
 }
