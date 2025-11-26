@@ -53,23 +53,9 @@ final class CheckoutFooterView: BaseView {
         $0.distribution = .fillEqually
     }
 
-    // MARK: - Initializer
+    // MARK: - Setup
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureViewHierarchy()
-        configureLayout()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        configureViewHierarchy()
-        configureLayout()
-    }
-
-    // MARK: - Layout
-
-    private func configureViewHierarchy() {
+    override func setUI() {
         addSubviews(
             totalPaymentContainerView,
             bottomButtonContainerView
@@ -83,31 +69,31 @@ final class CheckoutFooterView: BaseView {
         bottomButtonContainerView.addSubview(bottomButtonStackView)
     }
 
-    private func configureLayout() {
-        totalPaymentContainerView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(84)
+    override func setLayout() {
+        totalPaymentContainerView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(84)
         }
 
-        bottomButtonContainerView.snp.makeConstraints { make in
-            make.top.equalTo(totalPaymentContainerView.snp.bottom)
-            make.leading.trailing.bottom.equalToSuperview()
-            make.height.equalTo(90)
+        bottomButtonContainerView.snp.makeConstraints {
+            $0.top.equalTo(totalPaymentContainerView.snp.bottom)
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(70)
         }
 
-        totalPaymentTitleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(24)
-            make.centerY.equalToSuperview()
+        totalPaymentTitleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(20)
+            $0.centerY.equalToSuperview()
         }
 
-        totalPaymentAmountLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(24)
-            make.centerY.equalToSuperview()
+        totalPaymentAmountLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.centerY.equalToSuperview()
         }
 
-        bottomButtonStackView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(56)
+        bottomButtonStackView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(56)
         }
     }
 
