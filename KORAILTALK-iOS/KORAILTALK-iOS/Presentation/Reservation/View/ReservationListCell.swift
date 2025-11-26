@@ -63,7 +63,7 @@ final class ReservationListCell: UICollectionViewCell,ReuseIdentifiable {
     //MARK: - SetUI
     
     private func setUI() {
-        addSubviews(
+        contentView.addSubviews(
             traininfoView,
             trainTimeStackView,
             durationLabel,
