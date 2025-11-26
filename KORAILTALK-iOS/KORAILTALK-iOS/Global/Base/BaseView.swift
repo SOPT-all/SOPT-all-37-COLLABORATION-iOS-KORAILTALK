@@ -20,13 +20,12 @@ class BaseView: UIView {
             fatalError("init(coder:) has not been implemented")
         }
         
-        /// UI 컴포넌트 속성 설정 (do 메서드 관련)
-        func setStyle() {}
+        func setStyle() {
+            backgroundColor = .mainWhite
+        }
         
-        /// UI 위계 설정 (addSubView 등)
         func setUI() {}
         
-        /// 오토레이아웃 설정 (SnapKit 코드 관련)
         func setLayout() {}
 
 }
