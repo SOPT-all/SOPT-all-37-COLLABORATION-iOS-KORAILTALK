@@ -17,6 +17,7 @@ final class CheckoutViewController: BaseViewController {
     private let reservationId: Int
     private let cancelReservationService: CancelReservationServiceProtocol
     
+    
     // MARK: - UI
     
     private let navigationBar = NavigationBar(style: .payment)
@@ -74,6 +75,7 @@ final class CheckoutViewController: BaseViewController {
     
     private let soldierDiscountApplyView = DiscountApplyView()
     
+    
     // MARK: - Init
     
     init(
@@ -90,6 +92,7 @@ final class CheckoutViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
@@ -98,7 +101,9 @@ final class CheckoutViewController: BaseViewController {
         setUI()
         setLayout()
         bindFooter()
+        bindDiscountApplyView()
     }
+    
     
     // MARK: - Setup
     
@@ -237,6 +242,7 @@ final class CheckoutViewController: BaseViewController {
         }
     }
     
+    
     // MARK: - Bind
     
     private func bindFooter() {
@@ -245,21 +251,114 @@ final class CheckoutViewController: BaseViewController {
         }
     }
     
+    private func bindDiscountApplyView() {
+        discountApplyView.couponButton.addTarget(
+            self,
+            action: #selector(didTapCouponButton),
+            for: .touchUpInside
+        )
+        
+        discountApplyView.targetButton.addTarget(
+            self,
+            action: #selector(didTapTargetButton),
+            for: .touchUpInside
+        )
+        
+        soldierDiscountApplyView.targetButton.addTarget(
+            self,
+            action: #selector(didTapSoldierTargetButton),
+            for: .touchUpInside
+        )
+    }
+    
+    
+    // MARK: - Actions
+    
+    @objc
+    private func didTapCouponButton() {
+        presentCouponBottomSheet()
+    }
+    
+    @objc
+    private func didTapTargetButton() {
+        presentTargetBottomSheet()
+    }
+    
+    @objc
+    private func didTapSoldierTargetButton() {
+        presentSoldierTargetBottomSheet()
+    }
+    
+    
+    // MARK: - BottomSheet
+    
+    private func presentCouponBottomSheet() {
+        let couponItems = [
+            "10% 할인 쿠폰",
+            "주말 특가 쿠폰",
+            "왕복 승차권 3,000원 할인"
+        ]
+        
+        let vc = CheckoutDropdownBottomSheetViewController(
+            placeholder: "적용할 쿠폰 선택",
+            items: couponItems
+        )
+        
+        vc.onSelect = { [weak self] selected in
+            self?.discountApplyView.couponButton.updateSelected(text: selected)
+        }
+        
+        present(vc, animated: true)
+    }
+    
+    private func presentTargetBottomSheet() {
+        let targetItems = [
+            "성인 1명",
+            "청소년 1명",
+            "어린이 1명",
+            "경로 1명"
+        ]
+        
+        let vc = CheckoutDropdownBottomSheetViewController(
+            placeholder: "적용할 승객 선택",
+            items: targetItems
+        )
+        
+        vc.onSelect = { [weak self] selected in
+            self?.discountApplyView.targetButton.updateSelected(text: selected)
+        }
+        
+        present(vc, animated: true)
+    }
+    
+    private func presentSoldierTargetBottomSheet() {
+        let soldierTargets = [
+            "본인(현역병)",
+            "동반 보호자 1명"
+        ]
+        
+        let vc = CheckoutDropdownBottomSheetViewController(
+            placeholder: "할인 적용 대상 선택",
+            items: soldierTargets
+        )
+        
+        vc.onSelect = { [weak self] selected in
+            self?.soldierDiscountApplyView.targetButton.updateSelected(text: selected)
+        }
+        
+        present(vc, animated: true)
+    }
+    
+    
     // MARK: - Network
     
     @MainActor
     private func handleCancelReservation() async {
         do {
             try await cancelReservationService.cancelReservation(reservationId: reservationId)
-            //  TODO: 홈화면으로 이동 로직 추가
-            print("✅ 예약 취소 성공")
             navigationController?.popViewController(animated: true)
         } catch {
             print("❌ 예약 취소 실패: \(error)")
         }
     }
-}
-
-#Preview {
-    CheckoutViewController(reservationId: 123)
 }
