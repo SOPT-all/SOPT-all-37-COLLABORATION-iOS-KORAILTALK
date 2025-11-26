@@ -27,6 +27,9 @@ final class ReservationViewController: BaseViewController {
     
     private let reservationListView = ReservationListView()
     
+    private var dimmedView: UIView?
+    private var reservationModalView: ReservationModal?
+    
     //MARK: - SetView
     
     override func setView() {
@@ -139,7 +142,11 @@ final class ReservationViewController: BaseViewController {
     
     //MARK: - SetDelegate
     
-    override func setDelegate() { }
+    override func setDelegate() {
+        reservationListView.onSelectSchedule = { [weak self] schedule in
+            self?.showReservationModal(with: schedule)
+        }
+    }
     
     //MARK: - SetAddTaget
     
@@ -174,8 +181,7 @@ final class ReservationViewController: BaseViewController {
         
         tagScrollView.setContentOffset(.zero, animated: false)
         
-        // TODO: API 연동 시 여기에서 응답 데이터로 교체
-        let schedules = TrainSchedule.mockData
+        let schedules = TrainSchedule.mockData // TODO: API 연동 시 응답 데이터로 교체
         reservationListView.setTrainSchedule(schedules)
         
         resultLabel.text = "결과(\(schedules.count))"
@@ -193,6 +199,87 @@ final class ReservationViewController: BaseViewController {
                 self.reservationListView.alpha = 1.0
             }
         })
+    }
+    
+    private func showReservationModal(with schedule: TrainSchedule) {
+        dismissReservationModal()
+        
+        let dimmedView = UIView()
+        dimmedView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        view.addSubview(dimmedView)
+        dimmedView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        let timeText = "\(schedule.startAt) - \(schedule.arriveAt)"
+        let generalPrice = seatText(from: schedule.normalSeatStatus)
+        let specialPrice = seatText(from: schedule.premiumSeatStatus)
+        
+        let modal = ReservationModal(
+            time: timeText,
+            trainNameType: schedule.type,
+            trainNumber: schedule.trailNumber,
+            generalPrice: generalPrice,
+            specialPrice: specialPrice
+        )
+        
+        modal.onTapReserve = { [weak self] in
+            guard let self = self else { return }
+            let checkoutVC = CheckoutViewController(reservationId: 17)
+            self.navigationController?.pushViewController(checkoutVC, animated: true)
+        }
+        
+        dimmedView.addSubview(modal)
+        modal.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDimmedView))
+        dimmedView.addGestureRecognizer(tap)
+        
+        modal.layoutIfNeeded()
+        modal.transform = CGAffineTransform(translationX: 0, y: 300)
+        dimmedView.alpha = 0
+        
+        UIView.animate(withDuration: 0.25,
+                       delay: 0,
+                       usingSpringWithDamping: 0.9,
+                       initialSpringVelocity: 0.8,
+                       options: [.curveEaseOut],
+                       animations: {
+            dimmedView.alpha = 1
+            modal.transform = .identity
+        }, completion: nil)
+        
+        self.dimmedView = dimmedView
+        self.reservationModalView = modal
+    }
+    
+    @objc private func didTapDimmedView() {
+        dismissReservationModal()
+    }
+    
+    private func dismissReservationModal() {
+        guard let dimmedView = dimmedView,
+              let modal = reservationModalView else { return }
+        
+        UIView.animate(withDuration: 0.2,
+                       animations: {
+            dimmedView.alpha = 0
+            modal.transform = CGAffineTransform(translationX: 0, y: 300)
+        }, completion: { _ in
+            dimmedView.removeFromSuperview()
+        })
+        
+        self.dimmedView = nil
+        self.reservationModalView = nil
+    }
+    
+    private func seatText(from status: SeatStatus?) -> String {
+        guard let status = status else {
+            return "매진"
+        }
+        return status.title
     }
 }
 
