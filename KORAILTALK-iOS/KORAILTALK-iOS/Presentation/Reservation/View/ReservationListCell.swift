@@ -29,11 +29,6 @@ class ReservationListCell: UICollectionViewCell {
     private let premiumSeatStatus = SeatStatusView()
     private let seatStatusStackView = UIStackView()
     
-    //MARK: - Properties
-    
-    private var trainSchedule: TrainSchedule?
-    
-    
     
     //MARK: - Init
     
@@ -163,7 +158,6 @@ class ReservationListCell: UICollectionViewCell {
         departureTimeLabel.text = schedule.startAt
         arrivalTimeLabel.text = schedule.arriveAt
         durationLabel.text = schedule.formattedDuration
-        self.layoutIfNeeded()
     }
 }
 
