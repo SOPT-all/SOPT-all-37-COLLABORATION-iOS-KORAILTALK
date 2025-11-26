@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class DateTrainInfoView: UIView {
+final class DateTrainInfoView: BaseView {
 
     private let dateLabel = UILabel().then {
         $0.numberOfLines = 1

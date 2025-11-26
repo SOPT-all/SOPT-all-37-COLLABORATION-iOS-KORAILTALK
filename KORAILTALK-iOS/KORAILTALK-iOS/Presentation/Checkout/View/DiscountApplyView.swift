@@ -32,6 +32,25 @@ final class DiscountApplyView: BaseView {
     var onTapCoupon: (() -> Void)?
     var onTapTarget: (() -> Void)?
     
+    private lazy var couponRow = UIStackView(arrangedSubviews: [couponLabel, couponButton]).then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 48
+        $0.distribution = .fill
+    }
+    
+    private lazy var targetRow = UIStackView(arrangedSubviews: [targetLabel, targetButton]).then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 48
+        $0.distribution = .fill
+    }
+    
+    private lazy var verticalStack = UIStackView(arrangedSubviews: [couponRow, targetRow]).then {
+        $0.axis = .vertical
+        $0.alignment = .fill
+        $0.spacing = 12
+    }
     
     override func setUI() {
         couponButton.configure(placeholder: "적용할 쿠폰 선택")
@@ -42,26 +61,6 @@ final class DiscountApplyView: BaseView {
         }
         targetButton.onTap = { [weak self] in
             self?.onTapTarget?()
-        }
-        
-        let couponRow = UIStackView(arrangedSubviews: [couponLabel, couponButton]).then {
-            $0.axis = .horizontal
-            $0.alignment = .center
-            $0.spacing = 48
-            $0.distribution = .fill
-        }
-        
-        let targetRow = UIStackView(arrangedSubviews: [targetLabel, targetButton]).then {
-            $0.axis = .horizontal
-            $0.alignment = .center
-            $0.spacing = 48
-            $0.distribution = .fill
-        }
-        
-        let verticalStack = UIStackView(arrangedSubviews: [couponRow, targetRow]).then {
-            $0.axis = .vertical
-            $0.alignment = .fill
-            $0.spacing = 12
         }
         
         addSubview(verticalStack)
@@ -79,4 +78,18 @@ final class DiscountApplyView: BaseView {
             $0.height.equalTo(36)
         }
     }
+    
+    func configureForCouponSection() {
+        couponRow.isHidden = false
+        couponLabel.text = "할인 쿠폰"
+        couponButton.isHidden = false
+        
+        targetLabel.text = "적용 대상"
+    }
+    
+    func configureForTargetOnly(title: String = "적용 대상") {
+        couponRow.isHidden = true
+        targetLabel.text = title
+    }
 }
+
