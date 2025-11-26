@@ -6,8 +6,15 @@ import Then
 final class DiscountViewController: UIViewController, UITextFieldDelegate {
     
     private let discountView = DiscountView()
-    private let validVeteranNumber = "11-111111"
     private var modalView: CheckModalView?
+    
+    
+    //MARK: - Service
+    private let veteransService: VeteranVerificationServiceProtocol = VeteranVerificationService()
+    
+    private var veteransId: String = ""
+    private var password: String = ""
+    private var birth: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,20 +92,12 @@ final class DiscountViewController: UIViewController, UITextFieldDelegate {
             showModal(question: "개인정보 수집 및 이용에 동의해주세요.", confirmColor: .primary500)
             return
         }
-        let enteredNumber = discountView.veteransTextField.text ?? ""
-        if enteredNumber == validVeteranNumber {
-            showModal(question: "인증되었습니다.", confirmColor: .primary500)
-        }else {
-            showModal(question: "해당 보훈번호가 인증되지 않았습니다.", confirmColor: .primary500)
-            discountView.veteransTextField.text = ""
-            discountView.passwordTextField.text = ""
-            discountView.birthTextField.text = ""
-            discountView.agreecheckboxButton.isChecked = false
-            textFieldDidChange()
-        }
+        veteransId = discountView.veteransTextField.text ?? ""
+        password = discountView.passwordTextField.text ?? ""
+        birth = discountView.birthTextField.text ?? ""
+        
+        postVerification()
     }
-    
-    
     private func showModal(question: String, confirmColor: UIColor,confirmAction: (() -> Void)? = nil) {
         modalView?.removeFromSuperview()
         
@@ -119,9 +118,27 @@ final class DiscountViewController: UIViewController, UITextFieldDelegate {
         
         
     }
-}
-
-
-#Preview{
-    DiscountViewController()
+    
+    //MARK: - API 연결
+    private func postVerification(){
+        Task {
+            do {
+                let veteransVerification = try await veteransService.verifyVeteran(nationalId: veteransId, password: password, birthdate: birth)
+                await MainActor.run {
+                    if veteransVerification.verified {
+                        showModal(question: "인증되었습니다.", confirmColor: .primary500)
+                    }else {
+                        showModal(question: "해당 보훈번호가 인증되지 않았습니다.", confirmColor: .primary500)
+                        discountView.veteransTextField.text = ""
+                        discountView.passwordTextField.text = ""
+                        discountView.birthTextField.text = ""
+                        discountView.agreecheckboxButton.isChecked = false
+                        textFieldDidChange()
+                    }
+                }
+            }catch {
+                print("❌ 보훈 인증 실패:", error.localizedDescription)
+            }
+        }
+    }
 }
