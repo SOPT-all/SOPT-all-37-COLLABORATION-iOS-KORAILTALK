@@ -126,6 +126,3 @@ extension TrainSchedule {
         )
     ]
 }
-
-// 사용 예시
-let schedules = TrainSchedule.mockData
