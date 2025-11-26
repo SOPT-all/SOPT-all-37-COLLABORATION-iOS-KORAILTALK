@@ -12,6 +12,9 @@ import Then
 
 final class CheckModalView: BaseView {
     
+    var onNoTapped: (() -> Void)?
+    var onConfirmTapped: (() -> Void)?
+    
     private let questionLabel = UILabel().then{
         $0.textAlignment = .center
         $0.font = .sub3_m_16
@@ -28,17 +31,19 @@ final class CheckModalView: BaseView {
         $0.layer.cornerRadius = 8
         $0.isHidden = true
     }
+    
     private let buttonStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
         $0.distribution = .fillEqually
     }
     
-    // MARK: - Init
     override init(frame: CGRect){
         super.init(frame: frame)
         setupUI()
+        setupActions()
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -63,18 +68,30 @@ final class CheckModalView: BaseView {
         
         buttonStack.addArrangedSubview(noButton)
         buttonStack.addArrangedSubview(confirmButton)
+        
         questionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(40)
             $0.leading.trailing.equalToSuperview().inset(12)
         }
+        
         buttonStack.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(12)
             $0.bottom.equalToSuperview().inset(12)
             $0.height.equalTo(40)
         }
     }
+    
+    private func setupActions() {
+        noButton.addTarget(self, action: #selector(didTapNoButton), for: .touchUpInside)
+        confirmButton.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
+    }
+    
+    @objc private func didTapNoButton() {
+        onNoTapped?()
+    }
+    
+    @objc private func didTapConfirmButton() {
+        onConfirmTapped?()
+    }
 }
 
-#Preview{
-    CheckModalView()
-}
