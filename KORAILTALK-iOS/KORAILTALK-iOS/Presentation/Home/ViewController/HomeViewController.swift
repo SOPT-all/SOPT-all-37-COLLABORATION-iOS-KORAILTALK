@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 import SnapKit
 import Then
 
@@ -14,21 +15,26 @@ final class HomeViewController: BaseViewController {
     // MARK: - Properties
     
     private let menuData = ServiceMenuModel.mockData
-    
     private let homeService = HomeInformationService()
     
     // MARK: - UI Components
+    
     private let headerBackgroundView = UIView().then {
         $0.backgroundColor = .primary700
     }
+    
     private let navBar = NavigationBar(style: .home)
+    
     private let titleLabel = UILabel().then {
         $0.font = .head3_sb_18
         $0.textColor = .primary700
         $0.text = "어디로 가시겠어요?"
     }
+    
     private let ticketSearchFormView = TicketSearchFormView()
     private let serviceMenuView = ServiceMenuView()
+    
+    // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,6 +52,16 @@ final class HomeViewController: BaseViewController {
         serviceMenuView.collectionView.delegate = self
     }
     
+    override func setAddTarget() {
+        ticketSearchFormView.searchButton.addTarget(
+            self,
+            action: #selector(didTapTrainSearchButton),
+            for: .touchUpInside
+        )
+    }
+    
+    // MARK: - Network
+    
     private func fetchHomeData() {
         Task {
             do {
@@ -59,6 +75,8 @@ final class HomeViewController: BaseViewController {
             }
         }
     }
+    
+    // MARK: - UI Setup
     
     private func setupStyle() {
         view.backgroundColor = .gray50
@@ -106,6 +124,15 @@ final class HomeViewController: BaseViewController {
         }
     }
     
+    // MARK: - Actions
+    
+    @objc
+    private func didTapTrainSearchButton() {
+        let reservationVC = ReservationViewController()
+        reservationVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(reservationVC, animated: true)
+    }
+    
 }
 
 // MARK: - UICollectionView DataSource & Delegate
@@ -116,7 +143,8 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         return menuData.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ServiceMenuCell.identifier,
             for: indexPath
