@@ -41,6 +41,8 @@ final class ReservationListView: BaseView {
             $0.dataSource = self
             $0.register(ReservationListCell.self, forCellWithReuseIdentifier: ReservationListCell.reuseIdentifier)
             $0.backgroundColor = .gray100
+            $0.showsVerticalScrollIndicator = false
+
         }
     }
     
@@ -71,7 +73,12 @@ extension ReservationListView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReservationListCell.reuseIdentifier, for: indexPath) as! ReservationListCell
+        guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: ReservationListCell.reuseIdentifier,
+                for: indexPath
+            ) as? ReservationListCell else {
+                return UICollectionViewCell()
+            }
         cell.configure(schedule: trainSchedules[indexPath.row])
         
         return cell
@@ -95,17 +102,22 @@ extension ReservationListView: UICollectionViewDelegate {
 extension ReservationListView: UICollectionViewDelegateFlowLayout {
    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-          let totalSpacing =  2 * 16
-        guard let screenWidth = self.window?.windowScene?.screen.bounds.width else { return .zero }
-          let width = (screenWidth - CGFloat(totalSpacing))
-          return CGSize(width: width, height: 128)
+        let horizontalInset: CGFloat = 16
+        let width = collectionView.bounds.width - (horizontalInset * 2)
+        
+        let isSoldOut = (trainSchedules[indexPath.row].normalSeatStatus  == nil && trainSchedules[indexPath.row].premiumSeatStatus  == nil)
+        
+        if isSoldOut {
+            return CGSize(width: width, height: 96)
+        }
+        return CGSize(width: width, height: 128)
       }
 
       func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
           return 8
       }
       
-      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-          return 8
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+          return UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16)
       }
 }
