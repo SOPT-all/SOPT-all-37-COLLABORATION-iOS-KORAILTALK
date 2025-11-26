@@ -1,5 +1,5 @@
 //
-//  PriceTag.swift
+//  PriceTagView.swift
 //  KORAILTALK-iOS
 //
 //  Created by sumin Kong on 11/22/25.
@@ -35,7 +35,6 @@ final class PriceTagView: BaseView {
         setUI()
         setLayout()
         updateSelectedStyle()
-        setupTapGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -68,16 +67,6 @@ final class PriceTagView: BaseView {
         }
     }
     
-    private func setupTapGesture() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
-        addGestureRecognizer(tap)
-    }
-    
-    @objc private func didTap() {
-        guard !isDisabled else { return }
-        isSelected.toggle()
-    }
-    
     override func setStyle() {
         layer.cornerRadius = 8
         roomLabel.font = .body1_r_16
@@ -86,8 +75,7 @@ final class PriceTagView: BaseView {
         layer.borderColor = UIColor.gray200.cgColor
         backgroundColor = .mainWhite
         roomLabel.textColor = .mainBlack
-        priceLabel.textColor = .mainBlack
-        
+        priceLabel.textColor = .mainBlack        
     }
     
     override func setUI() {
