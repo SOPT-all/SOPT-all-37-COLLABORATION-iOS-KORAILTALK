@@ -14,7 +14,11 @@ protocol CancelReservationServiceProtocol {
 final class CancelReservationService: BaseService<CancelReservationTargetType>, CancelReservationServiceProtocol {
 
     func cancelReservation(reservationId: Int) async throws {
-        let _: BaseResponseBody<CancelReservationResponseDTO> =
+        let baseResponse: BaseResponseBody<CancelReservationResponseDTO> =
             try await request(with: .cancelReservation(reservationId: reservationId))
+
+        guard baseResponse.data != nil else {
+            throw NetworkError.responseError
+        }
     }
 }
