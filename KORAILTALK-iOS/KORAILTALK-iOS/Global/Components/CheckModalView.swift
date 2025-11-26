@@ -16,7 +16,7 @@ final class CheckModalView: BaseView {
         $0.textAlignment = .center
         $0.font = .sub3_m_16
     }
-    private let confirmButton = UIButton().then{
+    let confirmButton = UIButton().then{
         $0.layer.cornerRadius = 8
         $0.setTitleColor(.mainWhite, for: .normal)
     }
