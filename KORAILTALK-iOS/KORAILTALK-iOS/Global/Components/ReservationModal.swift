@@ -35,9 +35,9 @@ final class ReservationModal: BaseView {
        $0.textColor = .primary400
        $0.textAlignment = .center
    }
-    private lazy var trainInfoView: TrainInfoView = {
-        return TrainInfoView(trainName: trainNameType, trainNumber: trainNumber, isDisabled: false)
-    }()
+    private lazy var trainInfoView = TrainInfoView().then {
+        $0.configure(trainName: trainNameType, trainNumber: trainNumber, isDisabled: false)
+    }
     private lazy var generalSeatView = PriceTagView(roomLabel: "일반실", price: generalPrice)
     private lazy var specialSeatView = PriceTagView(roomLabel: "특실", price: specialPrice)
     
