@@ -15,7 +15,9 @@ final class HomeInformationService: BaseService<HomeInformationTargetType>, Home
     
     func getHomeInformation() async throws -> HomeInformation {
         let baseResponse: BaseResponseBody<HomeInformationResponseDTO> = try await request(with: .getHomeInformation)
-        let dto = baseResponse.data
+        guard let dto = baseResponse.data else {
+            throw NetworkError.responseError
+        }
         
         return dto.toDomain()
     }
