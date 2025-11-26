@@ -12,7 +12,7 @@ import Then
 
 final class CheckoutFooterView: BaseView {
     
-    var onTapCancelConfirm: (() -> Void)? 
+    var onTapCancelConfirm: (() -> Void)?
     
     private let totalPaymentContainerView = UIView().then {
         $0.backgroundColor = .primary700
@@ -81,7 +81,7 @@ final class CheckoutFooterView: BaseView {
         
         modalView.onConfirmTapped = { [weak self] in
             self?.dismissModal()
-            self?.onTapCancelConfirm?() 
+            self?.onTapCancelConfirm?()
         }
     }
     
