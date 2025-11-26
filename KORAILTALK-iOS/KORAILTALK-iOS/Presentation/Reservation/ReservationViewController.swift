@@ -12,7 +12,6 @@ import Then
 
 final class ReservationViewController: BaseViewController {
     
-    
     //MARK: - UI
     
     private let navBar = NavigationBar(style: .trainLookup)
@@ -39,7 +38,7 @@ final class ReservationViewController: BaseViewController {
     
     //MARK: - SetUI
     
-    func setUI() {
+    private func setUI() {
         view.backgroundColor = .gray100
         view.addSubviews(
             navBarBackgroundView,
@@ -49,29 +48,21 @@ final class ReservationViewController: BaseViewController {
             tagScrollView,
             dropdownStackView,
             resultLabel
-            
         )
         tagScrollView.addSubview(tagStackView)
-        
     }
     
     //MARK: - SetStyle
     
-    func setStyle() {
-        navBarBackgroundView.do {
-            $0.backgroundColor = .primary700
-        }
-        
-        reservationInfoView.do {
-            $0.backgroundColor = .mainWhite
-        }
+    private func setStyle() {
+        navBarBackgroundView.backgroundColor = .primary700
+        reservationInfoView.backgroundColor = .mainWhite
         
         tagStackView.do {
             $0.axis = .horizontal
             $0.spacing = 8
             $0.distribution = .fillProportionally
             $0.alignment = .center
-            
         }
         
         tagScrollView.do {
@@ -79,19 +70,13 @@ final class ReservationViewController: BaseViewController {
             $0.backgroundColor = .mainWhite
         }
         
-        seatDropdown.do {
-            $0.configure(placeholder: "전체", items: ["일반실", "특실"])
-        }
-        
-        serviceDropdown.do {
-            $0.configure(placeholder: "직통", items: ["환승"])
-        }
+        seatDropdown.configure(placeholder: "전체", items: ["일반실", "특실"])
+        serviceDropdown.configure(placeholder: "직통", items: ["환승"])
         
         dropdownStackView.do {
             $0.addArrangedSubviews(seatDropdown, serviceDropdown)
             $0.axis = .horizontal
             $0.spacing = 8
-            
         }
         
         resultLabel.do {
@@ -101,16 +86,12 @@ final class ReservationViewController: BaseViewController {
             $0.textAlignment = .center
         }
         
-        reservationListView.do {
-            $0.setTrainSchedule(TrainSchedule.mockData)
-        }
-        
-        
+        reservationListView.setTrainSchedule(TrainSchedule.mockData)
     }
     
     //MARK: - SetLayout
     
-    func setLayout() {
+    private func setLayout() {
         navBarBackgroundView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(navBar.snp.top)
@@ -120,31 +101,29 @@ final class ReservationViewController: BaseViewController {
             $0.top.equalToSuperview().offset(50)
             $0.leading.trailing.equalToSuperview()
         }
+        
         reservationInfoView.snp.makeConstraints {
             $0.top.equalTo(navBar.snp.bottom)
-            $0.trailing.leading.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(tagStackView.snp.top)
         }
         
-        tagScrollView.snp.makeConstraints{
+        tagScrollView.snp.makeConstraints {
             $0.top.equalTo(reservationInfoView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(52)
-            
         }
+        
         tagStackView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
-            
         }
         
         dropdownStackView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
             $0.top.equalTo(tagScrollView.snp.bottom).offset(16)
             $0.trailing.lessThanOrEqualTo(resultLabel.snp.leading)
-            $0.bottom.equalToSuperview()
-            
         }
         
         resultLabel.snp.makeConstraints {
@@ -153,22 +132,25 @@ final class ReservationViewController: BaseViewController {
         }
         
         reservationListView.snp.makeConstraints {
-            $0.top.equalTo(resultLabel.snp.bottom).offset(10+16)
+            $0.top.equalTo(resultLabel.snp.bottom).offset(26)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-        
     }
     
     //MARK: - SetDelegate
     
-    override func setDelegate() {
-        
-    }
+    override func setDelegate() { }
     
     //MARK: - SetAddTaget
     
     override func setAddTarget() {
+        navBar.onTapBack = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
         
+        navBar.onTapReload = { [weak self] in
+            self?.reloadTrainList()
+        }
     }
     
     //MARK: - Private
@@ -176,11 +158,41 @@ final class ReservationViewController: BaseViewController {
     private func createButtons() {
         TrainTagType.allCases.forEach { type in
             let button = TrainTagButton(type: type)
-            
             tagStackView.addArrangedSubview(button)
         }
     }
     
+    private func resetFiltersAndList() {
+        tagStackView.arrangedSubviews.forEach {
+            tagStackView.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
+        createButtons()
+        
+        seatDropdown.configure(placeholder: "전체", items: ["일반실", "특실"])
+        serviceDropdown.configure(placeholder: "직통", items: ["환승"])
+        
+        tagScrollView.setContentOffset(.zero, animated: false)
+        
+        // TODO: API 연동 시 여기에서 응답 데이터로 교체
+        let schedules = TrainSchedule.mockData
+        reservationListView.setTrainSchedule(schedules)
+        
+        resultLabel.text = "결과(\(schedules.count))"
+    }
     
-    
+    private func reloadTrainList() {
+        print("🌟 열차 화면 필터/리스트 초기화 된당")
+        
+        UIView.animate(withDuration: 0.15, animations: {
+            self.reservationListView.alpha = 0.0
+        }, completion: { _ in
+            self.resetFiltersAndList()
+            
+            UIView.animate(withDuration: 0.2) {
+                self.reservationListView.alpha = 1.0
+            }
+        })
+    }
 }
+
