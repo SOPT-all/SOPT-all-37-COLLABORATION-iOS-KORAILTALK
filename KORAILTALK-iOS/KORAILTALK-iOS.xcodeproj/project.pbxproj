@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A4927DFA2ED6A72E00E6E417 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A4927DF92ED6A72E00E6E417 /* Config.xcconfig */; };
 		A4FC95A82ECA472A000B1F48 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = A4FC95A72ECA472A000B1F48 /* Then */; };
 		A4FC95AB2ECA4736000B1F48 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A4FC95AA2ECA4736000B1F48 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A40143152EC9FB4D00D174C4 /* KORAILTALK-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KORAILTALK-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4927DF92ED6A72E00E6E417 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,6 +54,7 @@
 		A401430C2EC9FB4D00D174C4 = {
 			isa = PBXGroup;
 			children = (
+				A4927DF92ED6A72E00E6E417 /* Config.xcconfig */,
 				A40143172EC9FB4D00D174C4 /* KORAILTALK-iOS */,
 				A40143162EC9FB4D00D174C4 /* Products */,
 			);
@@ -135,6 +138,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4927DFA2ED6A72E00E6E417 /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +157,7 @@
 /* Begin XCBuildConfiguration section */
 		A40143292EC9FB4F00D174C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A4927DF92ED6A72E00E6E417 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -186,6 +191,7 @@
 		};
 		A401432A2EC9FB4F00D174C4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A4927DF92ED6A72E00E6E417 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -219,6 +225,7 @@
 		};
 		A401432B2EC9FB4F00D174C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A4927DF92ED6A72E00E6E417 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -283,6 +290,7 @@
 		};
 		A401432C2EC9FB4F00D174C4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A4927DF92ED6A72E00E6E417 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
