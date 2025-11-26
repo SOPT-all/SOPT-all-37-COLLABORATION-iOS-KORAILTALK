@@ -47,6 +47,21 @@ class ReservationListCell: UICollectionViewCell {
         setLayout()
     }
     
+    override func prepareForReuse() {
+           super.prepareForReuse()
+           
+           layer.backgroundColor = UIColor.white.cgColor
+           layer.borderColor = UIColor.gray150.cgColor
+           
+           departureTimeLabel.text = nil
+           arrivalTimeLabel.text = nil
+           durationLabel.text = nil
+           
+           normalSeatStatus.isHidden = true
+           premiumSeatStatus.isHidden = true
+           
+       }
+    
     //MARK: - SetUI
     
     private func setUI() {
