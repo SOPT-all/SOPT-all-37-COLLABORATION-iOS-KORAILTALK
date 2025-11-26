@@ -56,16 +56,8 @@
 			children = (
 				A4927DF92ED6A72E00E6E417 /* Config.xcconfig */,
 				A40143172EC9FB4D00D174C4 /* KORAILTALK-iOS */,
-				A40143162EC9FB4D00D174C4 /* Products */,
+				A43A959C2ED5B41D005322B1 /* KORAILTALK-iOS.app */,
 			);
-			sourceTree = "<group>";
-		};
-		A40143162EC9FB4D00D174C4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A40143152EC9FB4D00D174C4 /* KORAILTALK-iOS.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -92,7 +84,7 @@
 				A4FC95AA2ECA4736000B1F48 /* SnapKit */,
 			);
 			productName = "KORAILTALK-iOS";
-			productReference = A40143152EC9FB4D00D174C4 /* KORAILTALK-iOS.app */;
+			productReference = A43A959C2ED5B41D005322B1 /* KORAILTALK-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -124,7 +116,7 @@
 				A4FC95A92ECA4736000B1F48 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = A40143162EC9FB4D00D174C4 /* Products */;
+			productRefGroup = A401430C2EC9FB4D00D174C4;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
