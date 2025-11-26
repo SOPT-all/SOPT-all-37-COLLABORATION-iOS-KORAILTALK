@@ -81,7 +81,7 @@ final class DiscountViewController: UIViewController, UITextFieldDelegate {
         discountView.checkButton.isEnabled = veteranValid && passwordValid && birthValid
     }
     @objc private func checkButtonDidTap(){
-        if !discountView.agreecheckboxButton.isCheckd {
+        if !discountView.agreecheckboxButton.isChecked {
             showModal(question: "개인정보 수집 및 이용에 동의해주세요.", confirmColor: .primary500)
             return
         }
@@ -93,7 +93,8 @@ final class DiscountViewController: UIViewController, UITextFieldDelegate {
             discountView.veteransTextField.text = ""
             discountView.passwordTextField.text = ""
             discountView.birthTextField.text = ""
-            discountView.agreecheckboxButton.isCheckd = false
+            discountView.agreecheckboxButton.isChecked = false
+            textFieldDidChange()
         }
     }
     

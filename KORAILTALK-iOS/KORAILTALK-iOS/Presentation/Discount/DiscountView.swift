@@ -19,7 +19,7 @@ final class DiscountView: BaseView {
     private let veteranSectionHeader = SectionHeaderView().then {
         $0.configure(title: "국가 유공자 할인")
     }
-    let guardianSectionHeader = SectionHeaderView().then {
+    private let guardianSectionHeader = SectionHeaderView().then {
         $0.configure(title: "중증 보호자 할인", rightText: "적용대상 없음")
     }
     private let soldierSectionHeader = SectionHeaderView().then {
