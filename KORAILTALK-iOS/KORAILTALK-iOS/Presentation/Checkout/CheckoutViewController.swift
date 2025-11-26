@@ -12,6 +12,11 @@ import Then
 
 final class CheckoutViewController: BaseViewController {
     
+    // MARK: - Properties
+    
+    private let reservationId: Int
+    private let cancelReservationService: CancelReservationServiceProtocol
+    
     // MARK: - UI
     
     private let navigationBar = NavigationBar(style: .payment)
@@ -69,6 +74,22 @@ final class CheckoutViewController: BaseViewController {
     
     private let soldierDiscountApplyView = DiscountApplyView()
     
+    // MARK: - Init
+    
+    init(
+        reservationId: Int,
+        cancelReservationService: CancelReservationServiceProtocol = CancelReservationService()
+    ) {
+        self.reservationId = reservationId
+        self.cancelReservationService = cancelReservationService
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
@@ -76,6 +97,7 @@ final class CheckoutViewController: BaseViewController {
         view.backgroundColor = .mainWhite
         setUI()
         setLayout()
+        bindFooter()
     }
     
     // MARK: - Setup
@@ -214,9 +236,29 @@ final class CheckoutViewController: BaseViewController {
             $0.bottom.equalToSuperview()
         }
     }
+    
+    // MARK: - Bind
+    
+    private func bindFooter() {
+        footerView.onTapCancelConfirm = { [weak self] in
+            Task { await self?.handleCancelReservation() }
+        }
+    }
+    
+    // MARK: - Network
+    
+    @MainActor
+    private func handleCancelReservation() async {
+        do {
+            try await cancelReservationService.cancelReservation(reservationId: reservationId)
+            print("✅ 예약 취소 성공")
+            navigationController?.popViewController(animated: true)
+        } catch {
+            print("❌ 예약 취소 실패: \(error)")
+        }
+    }
 }
 
 #Preview {
-    CheckoutViewController()
+    CheckoutViewController(reservationId: 123)
 }
-

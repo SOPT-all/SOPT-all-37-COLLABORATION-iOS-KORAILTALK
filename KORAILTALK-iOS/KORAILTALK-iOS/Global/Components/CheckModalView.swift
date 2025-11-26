@@ -13,6 +13,7 @@ import Then
 final class CheckModalView: BaseView {
     
     var onNoTapped: (() -> Void)?
+    var onConfirmTapped: (() -> Void)?
     
     private let questionLabel = UILabel().then{
         $0.textAlignment = .center
@@ -37,13 +38,13 @@ final class CheckModalView: BaseView {
         $0.spacing = 8
         $0.distribution = .fillEqually
     }
-
+    
     override init(frame: CGRect){
         super.init(frame: frame)
         setupUI()
         setupActions()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -83,9 +84,15 @@ final class CheckModalView: BaseView {
     
     private func setupActions() {
         noButton.addTarget(self, action: #selector(didTapNoButton), for: .touchUpInside)
+        confirmButton.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
     }
     
     @objc private func didTapNoButton() {
         onNoTapped?()
     }
+    
+    @objc private func didTapConfirmButton() {
+        onConfirmTapped?()
+    }
 }
+
