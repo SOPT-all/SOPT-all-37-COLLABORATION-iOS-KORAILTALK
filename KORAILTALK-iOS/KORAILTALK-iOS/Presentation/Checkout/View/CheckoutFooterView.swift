@@ -12,8 +12,6 @@ import Then
 
 final class CheckoutFooterView: BaseView {
 
-    // MARK: - Properties
-
     private let totalPaymentContainerView = UIView().then {
         $0.backgroundColor = .primary700
     }
@@ -53,7 +51,12 @@ final class CheckoutFooterView: BaseView {
         $0.distribution = .fillEqually
     }
 
-    // MARK: - Setup
+    private let dimView = UIView().then {
+        $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        $0.alpha = 0
+    }
+
+    private let modalView = CheckModalView()
 
     override func setUI() {
         addSubviews(
@@ -67,6 +70,12 @@ final class CheckoutFooterView: BaseView {
         )
 
         bottomButtonContainerView.addSubview(bottomButtonStackView)
+
+        reservationCancelButton.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
+
+        modalView.onNoTapped = { [weak self] in
+            self?.dismissModal()
+        }
     }
 
     override func setLayout() {
@@ -97,10 +106,56 @@ final class CheckoutFooterView: BaseView {
         }
     }
 
-    // MARK: - Public
-
     func updateTotalPaymentAmount(_ text: String) {
         totalPaymentAmountLabel.text = text
     }
-}
 
+    @objc private func didTapCancelButton() {
+        modalView.configure(
+            question: "예약을 취소하시겠습니까?",
+            confirmText: "예",
+            confirmColor: .pointRed,
+            showNoButton: true
+        )
+
+        guard let parentView = superview else { return }
+
+        if dimView.superview == nil {
+            parentView.addSubview(dimView)
+            dimView.snp.makeConstraints {
+                $0.edges.equalToSuperview()
+            }
+        }
+
+        if modalView.superview == nil {
+            parentView.addSubview(modalView)
+            modalView.snp.makeConstraints {
+                $0.center.equalToSuperview()
+                $0.width.equalToSuperview().multipliedBy(0.8)
+                $0.height.equalTo(160)
+            }
+        }
+
+        dimView.alpha = 0
+        modalView.alpha = 0
+        modalView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+
+        UIView.animate(withDuration: 0.25) {
+            self.dimView.alpha = 1
+            self.modalView.alpha = 1
+            self.modalView.transform = .identity
+        }
+    }
+
+    private func dismissModal() {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.dimView.alpha = 0
+            self.modalView.alpha = 0
+            self.modalView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        }, completion: { _ in
+            self.dimView.removeFromSuperview()
+            self.modalView.removeFromSuperview()
+            self.modalView.transform = .identity
+        })
+    }
+}
