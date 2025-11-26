@@ -16,6 +16,10 @@ final class HomeViewController: BaseViewController {
     private let menuData = ServiceMenuModel.mockData
     
     // MARK: - UI Components
+    private let headerBackgroundView = UIView().then {
+        $0.backgroundColor = .primary700
+    }
+    private let navBar = NavigationBar(style: .home)
     private let titleLabel = UILabel().then {
         $0.font = .head3_sb_18
         $0.textColor = .primary700
@@ -40,14 +44,30 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupHierarchy() {
-        view.addSubview(titleLabel)
-        view.addSubview(ticketSearchFormView)
-        view.addSubview(serviceMenuView)
+        view.addSubviews(
+            headerBackgroundView,
+            navBar,
+            titleLabel,
+            ticketSearchFormView,
+            serviceMenuView
+        )
     }
     
     private func setupLayout() {
+        headerBackgroundView.snp.makeConstraints{
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(35)
+        }
+        
+        navBar.snp.makeConstraints{
+            $0.top.equalTo(headerBackgroundView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(35)
+        }
+        
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(-50) // 네비바 나오면 수정!
+            $0.top.equalTo(navBar.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(23)
         }
