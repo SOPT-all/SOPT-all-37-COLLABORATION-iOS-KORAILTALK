@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8D6B80592ED768F20079AF4B /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8D6B80582ED768F20079AF4B /* Config.xcconfig */; };
+		A44115302ED8BC4300E57A3F /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A441152F2ED8BC4300E57A3F /* Config.xcconfig */; };
 		A4FC95A82ECA472A000B1F48 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = A4FC95A72ECA472A000B1F48 /* Then */; };
 		A4FC95AB2ECA4736000B1F48 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A4FC95AA2ECA4736000B1F48 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8D6B80582ED768F20079AF4B /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		A40143152EC9FB4D00D174C4 /* KORAILTALK-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KORAILTALK-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A441152F2ED8BC4300E57A3F /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Config.xcconfig; path = /Users/sun/Documents/Config.xcconfig; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -54,7 +54,7 @@
 		A401430C2EC9FB4D00D174C4 = {
 			isa = PBXGroup;
 			children = (
-				8D6B80582ED768F20079AF4B /* Config.xcconfig */,
+				A441152F2ED8BC4300E57A3F /* Config.xcconfig */,
 				A40143172EC9FB4D00D174C4 /* KORAILTALK-iOS */,
 				A40143162EC9FB4D00D174C4 /* Products */,
 			);
@@ -138,7 +138,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D6B80592ED768F20079AF4B /* Config.xcconfig in Resources */,
+				A44115302ED8BC4300E57A3F /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,7 +157,6 @@
 /* Begin XCBuildConfiguration section */
 		A40143292EC9FB4F00D174C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D6B80582ED768F20079AF4B /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -191,7 +190,6 @@
 		};
 		A401432A2EC9FB4F00D174C4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D6B80582ED768F20079AF4B /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -225,7 +223,6 @@
 		};
 		A401432B2EC9FB4F00D174C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D6B80582ED768F20079AF4B /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -290,7 +287,6 @@
 		};
 		A401432C2EC9FB4F00D174C4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D6B80582ED768F20079AF4B /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

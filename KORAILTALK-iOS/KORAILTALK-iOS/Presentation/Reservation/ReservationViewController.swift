@@ -319,7 +319,7 @@ final class ReservationViewController: BaseViewController {
             time: timeText,
             trainNameType: schedule.type,
             trainNumber: schedule.trailNumber,
-            generalPrice: "48,800원",
+            generalPrice: "59,800원",
             specialPrice: "83,700원"
         )
         
