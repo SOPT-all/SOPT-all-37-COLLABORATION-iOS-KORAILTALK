@@ -223,7 +223,7 @@ final class CheckoutView: BaseView {
         
         dateTrainInfoView.configure(
             dateText: "2025년 12월 1일 (월)",
-            trainInfoText: "\(trainTag.title) \(info.trainNumber)"
+            trainInfoText: "\(trainTag.title) \(info.trainNumber)· 1호차 12A"
         )
         
         routeInfoView.configure(
