@@ -105,7 +105,7 @@ extension ReservationListView: UICollectionViewDelegateFlowLayout {
         let horizontalInset: CGFloat = 16
         let width = collectionView.bounds.width - (horizontalInset * 2)
         
-        let isSoldOut = (trainSchedules[indexPath.row].normalSeatStatus  == nil && trainSchedules[indexPath.row].premiumSeatStatus  == nil)
+        let isSoldOut = (trainSchedules[indexPath.row].normalSeatStatus  == .soldOut && trainSchedules[indexPath.row].premiumSeatStatus  == .soldOut)
         
         if isSoldOut {
             return CGSize(width: width, height: 96)

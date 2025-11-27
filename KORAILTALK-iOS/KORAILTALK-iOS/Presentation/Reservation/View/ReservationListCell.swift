@@ -148,7 +148,7 @@ final class ReservationListCell: UICollectionViewCell,ReuseIdentifiable {
     
     func configure(schedule: TrainSchedule) {
         
-        let isEmptySeat = schedule.normalSeatStatus == nil && schedule.premiumSeatStatus == nil
+        let isEmptySeat = schedule.normalSeatStatus == .soldOut && schedule.premiumSeatStatus == .soldOut
         
         
         traininfoView.configure(trainName: schedule.type, trainNumber: schedule.trailNumber, isDisabled: isEmptySeat)
@@ -156,16 +156,16 @@ final class ReservationListCell: UICollectionViewCell,ReuseIdentifiable {
             layer.backgroundColor = UIColor.gray100.cgColor
         }
         
-        if let normal = schedule.normalSeatStatus {
+        if schedule.normalSeatStatus != .soldOut {
             normalSeatStatus.isHidden = false
-            normalSeatStatus.configure(seatType: .normal, seatStatus: normal)
+            normalSeatStatus.configure(seatType: .normal, seatStatus: schedule.normalSeatStatus)
         } else {
             normalSeatStatus.isHidden = true
         }
         
-        if let premium = schedule.premiumSeatStatus {
+        if schedule.premiumSeatStatus != .soldOut {
             premiumSeatStatus.isHidden = false
-            premiumSeatStatus.configure(seatType: .premium, seatStatus: premium)
+            premiumSeatStatus.configure(seatType: .premium, seatStatus: schedule.premiumSeatStatus)
         } else {
             premiumSeatStatus.isHidden = true
         }

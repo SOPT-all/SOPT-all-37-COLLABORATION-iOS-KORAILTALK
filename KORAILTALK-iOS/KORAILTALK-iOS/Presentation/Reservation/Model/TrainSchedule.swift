@@ -13,16 +13,12 @@ struct TrainSchedule {
     let startAt: String
     let arriveAt: String
     let duration: Int
-    let normalSeatStatus: SeatStatus?
-    let premiumSeatStatus: SeatStatus?
+    let normalSeatStatus: SeatStatus
+    let premiumSeatStatus: SeatStatus
     
     var formattedDuration: String {
         let hours = duration / 60
         let minutes = duration % 60
         return String(format: "%d시간 %02d분", hours, minutes)
-    }
-    
-    var isAvailable: Bool {
-        normalSeatStatus != nil || premiumSeatStatus != nil
     }
 }
