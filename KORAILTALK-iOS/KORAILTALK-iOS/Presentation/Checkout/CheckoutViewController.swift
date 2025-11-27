@@ -12,6 +12,12 @@ import Then
 
 final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     
+    private enum TargetApplyType {
+        case coupon
+        case veteran
+        case soldier
+    }
+    
     // MARK: - Properties
     
     private let trainId: Int
@@ -31,6 +37,10 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     
     private let checkoutView = CheckoutView()
     private var trainReservation: TrainReservation?
+    
+    private var couponTargetIndex: Int?
+    private var veteranTargetIndex: Int?
+    private var soldierTargetIndex: Int?
     
     
     // MARK: - Init
@@ -136,13 +146,13 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         
         checkoutView.discountApplyView.targetButton.addTarget(
             self,
-            action: #selector(didTapTargetButton),
+            action: #selector(didTapCouponTargetButton),
             for: .touchUpInside
         )
         
         checkoutView.veteranTargetApplyView.targetButton.addTarget(
             self,
-            action: #selector(didTapTargetButton),
+            action: #selector(didTapVeteranTargetButton),
             for: .touchUpInside
         )
         
@@ -167,13 +177,18 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     }
     
     @objc
-    private func didTapTargetButton() {
-        presentTargetBottomSheet()
+    private func didTapCouponTargetButton() {
+        presentTargetBottomSheet(for: .coupon)
+    }
+    
+    @objc
+    private func didTapVeteranTargetButton() {
+        presentTargetBottomSheet(for: .veteran)
     }
     
     @objc
     private func didTapSoldierTargetButton() {
-        presentTargetBottomSheet()
+        presentTargetBottomSheet(for: .soldier)
     }
     
     @objc
@@ -230,17 +245,19 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
 
         let vc = CheckoutDropdownBottomSheetViewController(
             placeholder: "적용할 쿠폰 선택",
-            items: couponItems
+            items: couponItems,
+            disabledIndexes: []
         )
 
-        vc.onSelect = { [weak self] selected in
+        vc.onSelect = { [weak self] index, selected in
             guard let self else { return }
 
             self.checkoutView.discountApplyView.couponButton.updateSelected(text: selected)
 
-            if let coupon = coupons.first(where: {
-                selected.contains("\($0.discountRate)%")
-            }) {
+            if coupons.indices.contains(index) {
+                let coupon = coupons[index]
+                self.applyCoupon(discountRate: coupon.discountRate)
+            } else if let coupon = coupons.first(where: { selected.contains("\($0.discountRate)%") }) {
                 self.applyCoupon(discountRate: coupon.discountRate)
             }
         }
@@ -248,14 +265,15 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         present(vc, animated: true)
     }
     
-    private func presentTargetBottomSheet() {
+    private func presentTargetBottomSheet(for type: TargetApplyType) {
         guard let reservation = trainReservation else {
             let vc = CheckoutDropdownBottomSheetViewController(
                 placeholder: "할인 쿠폰 적용 대상 선택",
-                items: ["적용 가능한 승객이 없습니다."]
+                items: ["적용 가능한 승객이 없습니다."],
+                disabledIndexes: []
             )
             
-            vc.onSelect = { _ in }
+            vc.onSelect = { _, _ in }
             
             present(vc, animated: true)
             return
@@ -264,17 +282,43 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         let info = reservation.trainInfo
         let priceText = info.price.formattedPrice
 
-        let passengerText = "어른 - 1호차 12A / \(priceText)"
+        let items = ["어른 - 1호차 12A / \(priceText)"]
+        
+        var disabled = Set([couponTargetIndex, veteranTargetIndex, soldierTargetIndex].compactMap { $0 })
+        
+        let currentIndex: Int?
+        switch type {
+        case .coupon:
+            currentIndex = couponTargetIndex
+        case .veteran:
+            currentIndex = veteranTargetIndex
+        case .soldier:
+            currentIndex = soldierTargetIndex
+        }
+        if let currentIndex {
+            disabled.remove(currentIndex)
+        }
         
         let vc = CheckoutDropdownBottomSheetViewController(
             placeholder: "할인 쿠폰 적용 대상 선택",
-            items: [passengerText]
+            items: items,
+            disabledIndexes: disabled
         )
         
-        vc.onSelect = { [weak self] selected in
+        vc.onSelect = { [weak self] index, selected in
             guard let self else { return }
-            self.checkoutView.discountApplyView.targetButton.updateSelected(text: selected)
-            self.checkoutView.veteranTargetApplyView.targetButton.updateSelected(text: selected)
+            
+            switch type {
+            case .coupon:
+                self.couponTargetIndex = index
+                self.checkoutView.discountApplyView.targetButton.updateSelected(text: selected)
+            case .veteran:
+                self.veteranTargetIndex = index
+                self.checkoutView.veteranTargetApplyView.targetButton.updateSelected(text: selected)
+            case .soldier:
+                self.soldierTargetIndex = index
+                self.checkoutView.soldierDiscountApplyView.targetButton.updateSelected(text: selected)
+            }
         }
         
         present(vc, animated: true)
@@ -383,3 +427,4 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         }), for: .touchUpInside)
     }
 }
+

@@ -11,30 +11,30 @@ import SnapKit
 import Then
 
 final class CheckoutDropdownOptionCell: UITableViewCell {
-
+    
     // MARK: - UI
     
     private let titleLabel = UILabel().then {
         $0.font = .body1_r_16
         $0.textColor = .mainBlack
     }
-
+    
     // MARK: - Properties
     
     static let reuseIdentifier = "DropdownOptionCell"
-
+    
     // MARK: - Init
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
     }
-
+    
     // MARK: - UI Setup
     
     private func setupUI() {
@@ -46,12 +46,24 @@ final class CheckoutDropdownOptionCell: UITableViewCell {
             $0.centerY.equalToSuperview()
         }
     }
-
+    
     // MARK: - Configure
     
-    func configure(text: String, isSelected: Bool) {
+    func configure(text: String, isSelected: Bool, isEnabled: Bool = true) {
         titleLabel.text = text
-        contentView.backgroundColor = isSelected ? .primary200 : .mainWhite
+        
+        if isSelected {
+            contentView.backgroundColor = .primary200
+            titleLabel.textColor = .mainBlack
+            self.isUserInteractionEnabled = true
+        } else if !isEnabled {
+            contentView.backgroundColor = .gray100
+            titleLabel.textColor = .gray300
+            self.isUserInteractionEnabled = false
+        } else {
+            contentView.backgroundColor = .mainWhite
+            titleLabel.textColor = .mainBlack
+            self.isUserInteractionEnabled = true
+        }
     }
 }
-

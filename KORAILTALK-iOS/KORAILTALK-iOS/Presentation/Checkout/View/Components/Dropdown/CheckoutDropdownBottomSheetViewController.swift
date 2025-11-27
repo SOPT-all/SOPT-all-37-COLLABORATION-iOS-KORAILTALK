@@ -40,8 +40,10 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
     
     private let placeholder: String
     private let items: [String]
+    private let disabledIndexes: Set<Int>
     
-    var onSelect: ((String) -> Void)?
+    /// 선택된 인덱스와 값 전달
+    var onSelect: ((Int, String) -> Void)?
     
     private var containerBottomConstraint: Constraint?
     private var containerHeightConstraint: Constraint?
@@ -50,9 +52,14 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
     
     // MARK: - Init
     
-    init(placeholder: String, items: [String]) {
+    init(
+        placeholder: String,
+        items: [String],
+        disabledIndexes: Set<Int> = []
+    ) {
         self.placeholder = placeholder
         self.items = items
+        self.disabledIndexes = disabledIndexes
         super.init(nibName: nil, bundle: nil)
         
         modalPresentationStyle = .overFullScreen
@@ -138,11 +145,10 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
     
     private func setupDropdown() {
         dropdownView.configure(placeholder: placeholder, items: items)
+        dropdownView.disabledIndexes = disabledIndexes
         
-        dropdownView.onSelect = { [weak self] value in
-            self?.dismissSheetAnimated {
-                self?.onSelect?(value)
-            }
+        dropdownView.onSelect = { [weak self] value, index in
+            self?.onSelect?(index, value)
         }
     }
     

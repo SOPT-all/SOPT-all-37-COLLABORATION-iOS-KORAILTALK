@@ -11,9 +11,9 @@ import SnapKit
 import Then
 
 final class CheckoutDropdownView: UIView {
-
+    
     // MARK: - UI
-
+    
     private let containerView = UIView().then {
         $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 8
@@ -47,7 +47,7 @@ final class CheckoutDropdownView: UIView {
     }
     
     private var tableViewHeightConstraint: Constraint?
-
+    
     // MARK: - Properties
     
     private(set) var isExpanded: Bool = false
@@ -58,13 +58,17 @@ final class CheckoutDropdownView: UIView {
         didSet { tableView.reloadData() }
     }
     
-    var onSelect: ((String) -> Void)?
+    var disabledIndexes: Set<Int> = [] {
+        didSet { tableView.reloadData() }
+    }
+    
+    var onSelect: ((String, Int) -> Void)?
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(
         target: self,
         action: #selector(didTapHeader)
     )
-
+    
     // MARK: - Init
     
     override init(frame: CGRect) {
@@ -78,7 +82,7 @@ final class CheckoutDropdownView: UIView {
         setupUI()
         setupTableView()
     }
-
+    
     // MARK: - UI Setup
     
     private func setupUI() {
@@ -122,7 +126,7 @@ final class CheckoutDropdownView: UIView {
             $0.bottom.equalToSuperview()
         }
     }
-
+    
     // MARK: - Table Setup
     
     private func setupTableView() {
@@ -137,7 +141,7 @@ final class CheckoutDropdownView: UIView {
         tableView.layoutMargins = .zero
         tableView.cellLayoutMarginsFollowReadableWidth = false
     }
-
+    
     // MARK: - Public
     
     func configure(placeholder: String, items: [String]) {
@@ -153,7 +157,7 @@ final class CheckoutDropdownView: UIView {
         arrowImageView.setRotation(expanded: expanded)
         updateTableVisibility(animated: true)
     }
-
+    
     // MARK: - Private
     
     @objc
@@ -198,8 +202,13 @@ extension CheckoutDropdownView: UITableViewDataSource {
         }
         
         let isSelected = (indexPath.row == selectedIndex)
+        let isEnabled = disabledIndexes.contains(indexPath.row) == false
         
-        cell.configure(text: items[indexPath.row], isSelected: isSelected)
+        cell.configure(
+            text: items[indexPath.row],
+            isSelected: isSelected,
+            isEnabled: isEnabled
+        )
         return cell
     }
 }
@@ -211,9 +220,11 @@ extension CheckoutDropdownView: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath) {
         selectedIndex = indexPath.row
+        
         tableView.reloadData()
         
         let value = items[indexPath.row]
-        onSelect?(value)
+        onSelect?(value, indexPath.row)
     }
 }
+
