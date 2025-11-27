@@ -93,16 +93,14 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupLayout() {
-        headerBackgroundView.snp.makeConstraints{
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(35)
+        headerBackgroundView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(navBar.snp.top)
         }
         
-        navBar.snp.makeConstraints{
-            $0.top.equalTo(headerBackgroundView.snp.bottom)
+        navBar.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(50)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(35)
         }
         
         titleLabel.snp.makeConstraints {
