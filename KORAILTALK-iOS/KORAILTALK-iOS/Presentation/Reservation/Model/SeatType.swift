@@ -32,8 +32,8 @@ enum SeatStatus: String, CaseIterable {
 }
 
 enum SeatType: String, CaseIterable {
-    case normal
-    case premium
+    case normal = "NORMAL"
+    case premium = "PREMIUM"
     
     var title: String {
         switch self {
