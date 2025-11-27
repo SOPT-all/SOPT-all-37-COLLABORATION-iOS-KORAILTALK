@@ -133,7 +133,8 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     
     private func bindFooter() {
         checkoutView.footerView.onTapCancelConfirm = { [weak self] in
-            Task { await self?.handleCancelReservation() }
+            // 네트워크 없이 두 번째 모달만 띄우는 플로우
+            self?.showCancelCompletedModal()
         }
     }
     
@@ -166,6 +167,19 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     private func setupVeteranDiscountBindings() {
         let veteranView = checkoutView.veteranDiscountView
         veteranView.checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
+    }
+    
+    
+    // MARK: - Cancel Flow (네트워크 제거)
+    
+    private func showCancelCompletedModal() {
+        showModal(
+            question: "예약이 취소되었습니다.",
+            confirmColor: .primary500,
+            confirmAction: { [weak self] in
+                self?.navigateToHome()
+            }
+        )
     }
     
     
@@ -343,27 +357,6 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
             
         } catch {
             print("❌ 열차 예약 조회 실패: \(error)")
-        }
-    }
-    
-    @MainActor
-    private func handleCancelReservation() async {
-        guard let reservationId else {
-            return
-        }
-        
-        do {
-            try await cancelReservationService.cancelReservation(reservationId: reservationId)
-            
-            showModal(
-                question: "예약이 취소되었습니다.",
-                confirmColor: .primary500,
-                confirmAction: { [weak self] in
-                    self?.navigationController?.popViewController(animated: true)
-                }
-            )
-        } catch {
-            print("❌ 예약 취소 실패: \(error)")
         }
     }
     

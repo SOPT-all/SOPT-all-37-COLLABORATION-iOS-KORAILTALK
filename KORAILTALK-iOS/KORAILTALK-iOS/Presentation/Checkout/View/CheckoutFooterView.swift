@@ -82,8 +82,9 @@ final class CheckoutFooterView: BaseView {
         }
         
         modalView.onConfirmTapped = { [weak self] in
-            self?.dismissModal()
-            self?.onTapCancelConfirm?()
+            self?.dismissModal {
+                self?.onTapCancelConfirm?()
+            }
         }
     }
     
@@ -158,8 +159,7 @@ final class CheckoutFooterView: BaseView {
         }
     }
 
-    
-    private func dismissModal() {
+    private func dismissModal(completion: (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.25, animations: {
             self.dimView.alpha = 0
             self.modalView.alpha = 0
@@ -168,6 +168,8 @@ final class CheckoutFooterView: BaseView {
             self.dimView.removeFromSuperview()
             self.modalView.removeFromSuperview()
             self.modalView.transform = .identity
+            completion?()
         })
     }
 }
+
