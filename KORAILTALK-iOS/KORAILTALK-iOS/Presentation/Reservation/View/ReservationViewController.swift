@@ -30,12 +30,20 @@ final class ReservationViewController: BaseViewController {
     
     private let reservationService: ReservationListServiceProtocol = ReservationListService()
     
+    private var tagButtons: [TrainTagType: TrainTagButton] = [:]
+    private var buttonActions: [TrainTagType: () -> Void] = [:]
+    private var selectedButton: TrainTagType = .all {
+        didSet {
+            updateButtonStates()
+        }
+    }
     
     //MARK: - SetView
     
     override func setView() {
-        fetchTrainReservation()
+        
         createButtons()
+        setupButtonActions()
         setUI()
         setStyle()
         setLayout()
@@ -101,7 +109,7 @@ final class ReservationViewController: BaseViewController {
         resultLabel.do {
             $0.font = .cap1_m_12
             $0.textColor = .mainBlack
-            $0.text = "결과(12)"
+            $0.text = "결과(0)"
             $0.textAlignment = .center
         }
         
@@ -175,19 +183,67 @@ final class ReservationViewController: BaseViewController {
     
     private func createButtons() {
         TrainTagType.allCases.forEach { type in
-            let button = TrainTagButton(type: type)
-            
+            let button = TrainTagButton(type: type,isSelected: type == selectedButton)
+            button.addAction(UIAction { [weak self] _ in
+                self?.buttonActions[type]?()
+            }, for: .touchUpInside)
+            tagButtons[type] = button
             tagStackView.addArrangedSubview(button)
         }
+    }
+    
+    private func updateButtonStates() {
+        tagButtons.forEach { (type, button) in
+            button.isSelected = (type == selectedButton)
+        }
+    }
+    
+    private func setupButtonActions() {
+        
+        
+        buttonActions[.all] = {
+            self.selectedButton = .all
+            
+        }
+        
+        buttonActions[.ktx] = {
+            self.selectedButton = .ktx
+            self.fetchTrainReservation()
+            
+        }
+        
+        buttonActions[.ktxSancheon] = {
+            self.selectedButton = .ktxSancheon
+            
+        }
+        
+        buttonActions[.ktxCheongryong] = {
+            self.selectedButton = .ktxCheongryong
+        }
+        
+        buttonActions[.itxSaemaeul] = {
+            self.selectedButton = .itxSaemaeul
+        }
+        
+        buttonActions[.itxMaeum] = {
+            self.selectedButton = .itxMaeum
+        }
+        
+        buttonActions[.mugunghwa] = {
+            self.selectedButton = .mugunghwa
+        }
+        
+        
     }
     
     private func fetchTrainReservation() {
         Task {
             do {
                 let trainSearchResult = try await reservationService.getReservationList()
-
+                
                 await MainActor.run {
                     self.configure(with: trainSearchResult)
+                    self.resultLabel.text = "결과(\(trainSearchResult.totalTrains))"
                 }
             } catch {
                 print("ReservationView 리스트 호출 실패:", error.localizedDescription)
