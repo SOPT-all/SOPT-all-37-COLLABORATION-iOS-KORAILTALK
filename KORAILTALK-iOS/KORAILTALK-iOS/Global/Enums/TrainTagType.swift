@@ -15,11 +15,13 @@ struct TrainTagTypeStyle {
 
 enum TrainTagType: String, CaseIterable {
     case all
-    case ktx
-    case srt
-    case itxSaemaeul
-    case itxMaeum
-    case mugunghwa
+    case ktx = "KTX"
+    case ktxSancheon = "KTX-S"
+    case ktxCheongryong = "KTX-C"
+    case itxSaemaeul = "ITX-N"
+    case itxMaeum = "ITX-M"
+    case mugunghwa = "FLOWER"
+
     
     var title: String {
         switch self {
@@ -27,14 +29,16 @@ enum TrainTagType: String, CaseIterable {
             return "전체"
         case .ktx:
             return "KTX"
-        case .srt:
-            return "SRT"
+        case .ktxSancheon:
+            return "KTX-산천"
+        case .ktxCheongryong:
+            return "KTX-청룡"
         case .itxSaemaeul:
             return "ITX-새마을"
         case .itxMaeum:
             return "ITX-마음"
         case .mugunghwa:
-            return "무궁화"
+            return "무궁화호"
         }
     }
     
