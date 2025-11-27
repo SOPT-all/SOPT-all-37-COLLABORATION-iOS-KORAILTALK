@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - DTO
 
-struct TrainSearchResponseDTO: Decodable, ResponseModelType {
+struct TrainSearchResponseDTO: ResponseModelType {
     let origin: String
     let destination: String
     let totalTrains: Int

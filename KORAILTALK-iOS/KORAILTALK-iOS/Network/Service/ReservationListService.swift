@@ -17,8 +17,9 @@ final class ReservationListService: BaseService<ReservationListTargetType>, Rese
         let baseResponse: BaseResponseBody<TrainSearchResponseDTO> =
         try await request(with: .fetchReservationTypeKTX)
 
-        let dto = baseResponse.data
-
+        guard let dto = baseResponse.data else {
+            throw NetworkError.responseError
+        }
         return dto.toDomain()
     }
 }
