@@ -16,6 +16,7 @@ final class HomeViewController: BaseViewController {
     
     private let menuData = ServiceMenuModel.mockData
     private let homeService = HomeInformationService()
+    private var homeInformation: HomeInformation?
     
     // MARK: - UI Components
     
@@ -66,10 +67,9 @@ final class HomeViewController: BaseViewController {
         Task {
             do {
                 let data = try await homeService.getHomeInformation()
+                self.homeInformation = data
                 ticketSearchFormView.configure(with: data)
-                
                 print("홈 데이터 로드 성공: \(data)")
-                
             } catch {
                 print("홈 데이터 로드 실패: \(error)")
             }
@@ -127,6 +127,10 @@ final class HomeViewController: BaseViewController {
     @objc
     private func didTapTrainSearchButton() {
         let reservationVC = ReservationViewController()
+        
+        let stations = ticketSearchFormView.currentStations()
+        reservationVC.configure(origin: stations.origin, destination: stations.destination)
+        
         reservationVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(reservationVC, animated: true)
     }
@@ -159,3 +163,4 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         print("\(menuData[indexPath.item].title) 클릭됨!")
     }
 }
+

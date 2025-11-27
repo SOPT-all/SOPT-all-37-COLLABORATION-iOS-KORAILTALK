@@ -9,9 +9,14 @@ import UIKit
 import SnapKit
 import Then
 
-final class TicketSearchFormView: BaseView{
+final class TicketSearchFormView: BaseView {
     
-    var isBusanDestination = true
+    // MARK: - State
+    
+    private(set) var origin: String = "서울"
+    private(set) var destination: String = "부산"
+    
+    // MARK: - UI
     
     private let departureRow = StationRowView(title: "출발", station: "서울")
     private let separator1 = UIView()
@@ -30,6 +35,8 @@ final class TicketSearchFormView: BaseView{
     
     let searchButton = KorailButton(title: "열차조회", style: .primary)
     
+    // MARK: - SetStyle
+    
     override func setStyle() {
         self.backgroundColor = .mainWhite
         self.layer.cornerRadius = 10
@@ -42,12 +49,25 @@ final class TicketSearchFormView: BaseView{
         [separator1, separator2, separator3].forEach {
             $0.backgroundColor = .gray150
         }
-        
     }
     
+    // MARK: - SetUI
+    
     override func setUI() {
-        addSubviews(departureRow, separator1, arrivalRow, separator2, dateRow, separator3, passengerRow, switchButton, searchButton)
+        addSubviews(
+            departureRow,
+            separator1,
+            arrivalRow,
+            separator2,
+            dateRow,
+            separator3,
+            passengerRow,
+            switchButton,
+            searchButton
+        )
     }
+    
+    // MARK: - SetLayout
     
     override func setLayout() {
         
@@ -106,15 +126,12 @@ final class TicketSearchFormView: BaseView{
     // MARK: - Logic
     
     func switchStations() {
-        isBusanDestination.toggle()
+        let temp = origin
+        origin = destination
+        destination = temp
         
-        if isBusanDestination {
-            departureRow.updateStation("서울")
-            arrivalRow.updateStation("부산")
-        } else {
-            departureRow.updateStation("부산")
-            arrivalRow.updateStation("서울")
-        }
+        departureRow.updateStation(origin)
+        arrivalRow.updateStation(destination)
     }
     
     @objc private func switchButtonTapped() {
@@ -123,7 +140,13 @@ final class TicketSearchFormView: BaseView{
     }
     
     func configure(with data: HomeInformation) {
-        departureRow.updateStation(data.origin)
-        arrivalRow.updateStation(data.destination)
+        origin = data.origin
+        destination = data.destination
+        departureRow.updateStation(origin)
+        arrivalRow.updateStation(destination)
+    }
+    
+    func currentStations() -> (origin: String, destination: String) {
+        return (origin, destination)
     }
 }

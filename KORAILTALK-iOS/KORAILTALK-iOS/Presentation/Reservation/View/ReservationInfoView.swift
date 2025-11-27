@@ -27,22 +27,30 @@ final class ReservationInfoView: BaseView {
     private let dateLabel = UILabel()
     private let dateStackView = UIStackView()
     
-    
     private let checkBox = CheckBox()
     private let checkBoxLabel = UILabel()
     private let checkBoxStackView = UIStackView()
     
+    private var originText: String?
+    private var destinationText: String?
+    
     //MARK: - SetUI
     
     override func setUI() {
-        addSubviews(routeStackView,reservationDetailLabel,dateStackView, checkBoxStackView)
+        addSubviews(
+            routeStackView,
+            reservationDetailLabel,
+            dateStackView,
+            checkBoxStackView
+        )
     }
+    
     //MARK: - SetStyle
     
     override func setStyle() {
         
         originLabel.do {
-            $0.text = "서울"
+            $0.text = originText
             $0.textColor = .primary400
             $0.font = .head2_m_20
             $0.textAlignment = .center
@@ -54,7 +62,7 @@ final class ReservationInfoView: BaseView {
         }
         
         destinationLabel.do {
-            $0.text = "부산"
+            $0.text = destinationText
             $0.textColor = .primary400
             $0.font = .head2_m_20
         }
@@ -67,7 +75,7 @@ final class ReservationInfoView: BaseView {
         }
         
         reservationDetailLabel.do {
-            $0.text = "11월 10일 · 편도 · 어른 1명"
+            $0.text = "12월 1일 · 편도 · 어른 1명"
             $0.font = .cap1_m_12
             $0.textColor = .gray400
             $0.textAlignment = .center
@@ -75,7 +83,6 @@ final class ReservationInfoView: BaseView {
         
         leftButton.do {
             $0.setImage(UIImage(named: "leftarrow"), for: .normal)
-            
         }
         
         dateTitleLabel.do {
@@ -85,13 +92,13 @@ final class ReservationInfoView: BaseView {
             $0.textAlignment = .center
         }
         
-        
         dateLabel.do {
-            $0.text = "11월 10일 (화)"
+            $0.text = "12월 1일 (월)"
             $0.font = .body4_m_14
             $0.textColor = .mainBlack
             $0.textAlignment = .center
         }
+        
         rightButton.do {
             $0.setImage(UIImage(named: "rightarrow"), for: .normal)
         }
@@ -109,7 +116,7 @@ final class ReservationInfoView: BaseView {
         }
         
         checkBoxStackView.do {
-            $0.addArrangedSubviews(checkBox,checkBoxLabel)
+            $0.addArrangedSubviews(checkBox, checkBoxLabel)
             $0.axis = .horizontal
             $0.spacing = 0
         }
@@ -139,8 +146,16 @@ final class ReservationInfoView: BaseView {
             $0.top.equalTo(reservationDetailLabel.snp.bottom).offset(27)
             $0.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
-            
         }
     }
     
+    //MARK: - Public
+    
+    func configure(origin: String, destination: String) {
+        originText = origin
+        destinationText = destination
+        originLabel.text = origin
+        destinationLabel.text = destination
+    }
 }
+

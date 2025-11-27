@@ -183,8 +183,3 @@ final class ReservationListCell: UICollectionViewCell,ReuseIdentifiable {
         durationLabel.text = schedule.formattedDuration
     }
 }
-
-#Preview {
-    ReservationListCell()
-}
-

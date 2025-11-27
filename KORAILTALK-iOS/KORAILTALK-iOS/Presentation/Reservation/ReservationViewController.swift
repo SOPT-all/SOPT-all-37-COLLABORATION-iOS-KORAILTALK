@@ -26,9 +26,23 @@ final class ReservationViewController: BaseViewController {
     private let resultLabel = UILabel()
     
     private let reservationListView = ReservationListView()
+    private let emptyLabel = UILabel()
     
     private var dimmedView: UIView?
     private var reservationModalView: ReservationModal?
+    
+    private enum SeatFilter {
+        case all
+        case normal
+        case premium
+    }
+    
+    private var selectedTag: TrainTagType = .all
+    private var allSchedules: [TrainSchedule] = TrainSchedule.mockData
+    private var seatFilter: SeatFilter = .all
+    
+    private var origin: String = "서울"
+    private var destination: String = "부산"
     
     //MARK: - SetView
     
@@ -37,6 +51,9 @@ final class ReservationViewController: BaseViewController {
         setUI()
         setStyle()
         setLayout()
+        reservationInfoView.configure(origin: origin, destination: destination)
+        updateTagSelection()
+        applyFilter()
     }
     
     //MARK: - SetUI
@@ -50,7 +67,8 @@ final class ReservationViewController: BaseViewController {
             reservationInfoView,
             tagScrollView,
             dropdownStackView,
-            resultLabel
+            resultLabel,
+            emptyLabel
         )
         tagScrollView.addSubview(tagStackView)
     }
@@ -85,11 +103,27 @@ final class ReservationViewController: BaseViewController {
         resultLabel.do {
             $0.font = .cap1_m_12
             $0.textColor = .mainBlack
-            $0.text = "결과(12)"
             $0.textAlignment = .center
         }
         
-        reservationListView.setTrainSchedule(TrainSchedule.mockData)
+        emptyLabel.do {
+            $0.textAlignment = .center
+            $0.textColor = .gray500
+            $0.font = .body1_r_16
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.09
+            
+            let attrText = NSMutableAttributedString(
+                string: "예약 가능한 기차가 없어요...",
+                attributes: [
+                    .kern: -0.24,
+                    .paragraphStyle: paragraphStyle
+                ]
+            )
+            $0.attributedText = attrText
+            $0.isHidden = true
+        }
     }
     
     //MARK: - SetLayout
@@ -108,7 +142,7 @@ final class ReservationViewController: BaseViewController {
         reservationInfoView.snp.makeConstraints {
             $0.top.equalTo(navBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(tagStackView.snp.top)
+            $0.bottom.equalTo(tagScrollView.snp.top)
         }
         
         tagScrollView.snp.makeConstraints {
@@ -138,6 +172,11 @@ final class ReservationViewController: BaseViewController {
             $0.top.equalTo(resultLabel.snp.bottom).offset(26)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+        
+        emptyLabel.snp.makeConstraints {
+            $0.centerX.equalTo(reservationListView)
+            $0.centerY.equalTo(reservationListView)
+        }
     }
     
     //MARK: - SetDelegate
@@ -148,7 +187,7 @@ final class ReservationViewController: BaseViewController {
         }
     }
     
-    //MARK: - SetAddTaget
+    //MARK: - SetAddTarget
     
     override func setAddTarget() {
         navBar.onTapBack = { [weak self] in
@@ -158,6 +197,31 @@ final class ReservationViewController: BaseViewController {
         navBar.onTapReload = { [weak self] in
             self?.reloadTrainList()
         }
+        
+        seatDropdown.onSelect = { [weak self] value in
+            guard let self = self else { return }
+            switch value {
+            case "일반실":
+                self.seatFilter = .normal
+            case "특실":
+                self.seatFilter = .premium
+            default:
+                self.seatFilter = .all
+            }
+            self.applyFilter()
+        }
+        
+        serviceDropdown.onSelect = { [weak self] _ in
+            self?.applyFilter()
+        }
+    }
+    
+    //MARK: - Public
+    
+    func configure(origin: String, destination: String) {
+        self.origin = origin
+        self.destination = destination
+        reservationInfoView.configure(origin: origin, destination: destination)
     }
     
     //MARK: - Private
@@ -165,8 +229,47 @@ final class ReservationViewController: BaseViewController {
     private func createButtons() {
         TrainTagType.allCases.forEach { type in
             let button = TrainTagButton(type: type)
+            button.addTarget(self, action: #selector(didTapTag(_:)), for: .touchUpInside)
             tagStackView.addArrangedSubview(button)
         }
+    }
+    
+    @objc private func didTapTag(_ sender: TrainTagButton) {
+        selectedTag = sender.type
+        updateTagSelection()
+        applyFilter()
+    }
+    
+    private func updateTagSelection() {
+        for case let button as TrainTagButton in tagStackView.arrangedSubviews {
+            button.isSelected = (button.type == selectedTag)
+        }
+    }
+    
+    private func applyFilter() {
+        var filtered = allSchedules
+        
+        if selectedTag != .all {
+            filtered = filtered.filter { $0.type.rawValue == selectedTag.rawValue }
+        }
+        
+        switch seatFilter {
+        case .all:
+            break
+        case .normal:
+            filtered = filtered.filter { $0.normalSeatStatus != .soldOut }
+        case .premium:
+            filtered = filtered.filter {
+                guard let status = $0.premiumSeatStatus else { return false }
+                return status != .soldOut
+            }
+        }
+        
+        reservationListView.setTrainSchedule(filtered)
+        resultLabel.text = "결과(\(filtered.count))"
+        
+        reservationListView.isHidden = filtered.isEmpty
+        emptyLabel.isHidden = !filtered.isEmpty
     }
     
     private func resetFiltersAndList() {
@@ -174,22 +277,21 @@ final class ReservationViewController: BaseViewController {
             tagStackView.removeArrangedSubview($0)
             $0.removeFromSuperview()
         }
+        selectedTag = .all
+        seatFilter = .all
         createButtons()
+        updateTagSelection()
         
         seatDropdown.configure(placeholder: "전체", items: ["일반실", "특실"])
         serviceDropdown.configure(placeholder: "직통", items: ["환승"])
         
         tagScrollView.setContentOffset(.zero, animated: false)
         
-        let schedules = TrainSchedule.mockData // TODO: API 연동 시 응답 데이터로 교체
-        reservationListView.setTrainSchedule(schedules)
-        
-        resultLabel.text = "결과(\(schedules.count))"
+        allSchedules = TrainSchedule.mockData
+        applyFilter()
     }
     
     private func reloadTrainList() {
-        print("🌟 열차 화면 필터/리스트 초기화 된당")
-        
         UIView.animate(withDuration: 0.15, animations: {
             self.reservationListView.alpha = 0.0
         }, completion: { _ in
@@ -212,21 +314,21 @@ final class ReservationViewController: BaseViewController {
         }
         
         let timeText = "\(schedule.startAt) - \(schedule.arriveAt)"
-        let generalPrice = seatText(from: schedule.normalSeatStatus)
-        let specialPrice = seatText(from: schedule.premiumSeatStatus)
         
         let modal = ReservationModal(
             time: timeText,
             trainNameType: schedule.type,
             trainNumber: schedule.trailNumber,
-            generalPrice: generalPrice,
-            specialPrice: specialPrice
+            generalPrice: "48,800원",
+            specialPrice: "83,700원"
         )
         
         modal.onTapReserve = { [weak self] in
             guard let self = self else { return }
-            let checkoutVC = CheckoutViewController(trainId: 1,
-                                                    seatType: .normal)
+            let checkoutVC = CheckoutViewController(
+                trainId: 1,
+                seatType: .normal
+            )
             self.navigationController?.pushViewController(checkoutVC, animated: true)
         }
         
