@@ -211,6 +211,9 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
             discountFare: discount,
             discountFee: 0
         )
+        
+        let total = price + discount
+        checkoutView.footerView.updateTotalPaymentAmount(total.formattedPrice)
     }
     
     
@@ -285,6 +288,10 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
             trainReservation = reservation
             reservationId = reservation.trainInfo.reservationId
             checkoutView.configure(with: reservation)
+            
+            let price = reservation.trainInfo.price
+            checkoutView.footerView.updateTotalPaymentAmount(price.formattedPrice)
+            
         } catch {
             print("❌ 열차 예약 조회 실패: \(error)")
         }
