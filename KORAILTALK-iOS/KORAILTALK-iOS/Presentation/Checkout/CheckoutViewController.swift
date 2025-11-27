@@ -221,9 +221,12 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     
     private func presentCouponBottomSheet() {
         guard let reservation = trainReservation else { return }
-        
+
         let coupons = reservation.coupons
-        let couponItems = coupons.map { $0.name }
+
+        let couponItems = coupons.map { coupon in
+            "운임의 \(coupon.discountRate)% 할인"
+        }
 
         let vc = CheckoutDropdownBottomSheetViewController(
             placeholder: "적용할 쿠폰 선택",
@@ -235,7 +238,9 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
 
             self.checkoutView.discountApplyView.couponButton.updateSelected(text: selected)
 
-            if let coupon = coupons.first(where: { $0.name == selected }) {
+            if let coupon = coupons.first(where: {
+                selected.contains("\($0.discountRate)%")
+            }) {
                 self.applyCoupon(discountRate: coupon.discountRate)
             }
         }
