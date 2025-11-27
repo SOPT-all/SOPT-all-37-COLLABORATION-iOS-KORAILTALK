@@ -61,6 +61,7 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         view.backgroundColor = .mainWhite
         
         setupView()
+        bindNavigationBar()
         bindFooter()
         bindDiscountApplyView()
         setupVeteranDiscountBindings()
@@ -81,6 +82,39 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         view.addSubview(checkoutView)
         checkoutView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+    }
+    
+    private func bindNavigationBar() {
+        let navBar = checkoutView.navigationBar
+        
+        navBar.onTapBack = { [weak self] in
+            guard let self else { return }
+            
+            if let navigationController = self.navigationController {
+                navigationController.popViewController(animated: true)
+            } else {
+                self.dismiss(animated: true)
+            }
+        }
+        
+        navBar.onTapCancel = { [weak self] in
+            self?.navigateToHome()
+        }
+    }
+    
+    private func navigateToHome() {
+        if let navigationController {
+            if let homeVC = navigationController.viewControllers.first(where: { $0 is HomeViewController }) {
+                navigationController.popToViewController(homeVC, animated: true)
+            } else {
+                let homeVC = HomeViewController()
+                navigationController.setViewControllers([homeVC], animated: true)
+            }
+        } else {
+            let homeVC = HomeViewController()
+            homeVC.modalPresentationStyle = .fullScreen
+            present(homeVC, animated: true)
         }
     }
     
@@ -162,6 +196,7 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         postVeteranVerification()
     }
     
+    
     // MARK: - Coupon Logic
 
     private func applyCoupon(discountRate: Int) {
@@ -177,6 +212,7 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
             discountFee: 0
         )
     }
+    
     
     // MARK: - BottomSheet
     
@@ -211,8 +247,7 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
                 items: ["적용 가능한 승객이 없습니다."]
             )
             
-            vc.onSelect = { _ in
-            }
+            vc.onSelect = { _ in }
             
             present(vc, animated: true)
             return
@@ -330,11 +365,3 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         }), for: .touchUpInside)
     }
 }
-
-#Preview {
-    CheckoutViewController(
-        trainId: 1,
-        seatType: .normal
-    )
-}
-
