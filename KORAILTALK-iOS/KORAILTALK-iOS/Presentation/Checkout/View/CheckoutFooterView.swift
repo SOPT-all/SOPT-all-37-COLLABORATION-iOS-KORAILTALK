@@ -43,6 +43,8 @@ final class CheckoutFooterView: BaseView {
         $0.setTitle("다음", for: .normal)
         $0.setTitleColor(.primary700, for: .normal)
         $0.titleLabel?.font = .body1_r_16
+        $0.isEnabled = false
+        $0.isUserInteractionEnabled = false
     }
     
     private lazy var bottomButtonStackView = UIStackView(arrangedSubviews: [
