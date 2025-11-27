@@ -7,9 +7,11 @@
 
 import UIKit
 
+
 enum SeatStatus: String, CaseIterable {
     case available
     case almostSoldOut
+    case soldOut
     
     var title: String {
         switch self {
@@ -17,6 +19,8 @@ enum SeatStatus: String, CaseIterable {
             return "예약가능"
         case .almostSoldOut:
             return "매진임박"
+        case .soldOut:
+            return "매진"
         }
     }
     
@@ -25,10 +29,24 @@ enum SeatStatus: String, CaseIterable {
         case .available:
             return .gray400
         case .almostSoldOut:
+            return .pointOrange
+        case .soldOut:
             return .pointRed
         }
     }
     
+    init(serverValue: String) {
+        switch serverValue {
+        case "예약가능":
+            self = .available
+        case "매진임박":
+            self = .almostSoldOut
+        case "매진" :
+            self = .soldOut
+        default:
+            self = .soldOut
+        }
+    }
 }
 
 enum SeatType: String, CaseIterable {
@@ -37,9 +55,9 @@ enum SeatType: String, CaseIterable {
     
     var title: String {
         switch self {
-        case .normal: 
+        case .normal:
             return "일반"
-        case .premium: 
+        case .premium:
             return "특"
         }
     }
