@@ -26,21 +26,9 @@ final class CheckoutView: BaseView {
     let footerView = CheckoutFooterView()
     let checkoutInfoView = CheckoutInfoView()
     
-    let dateTrainInfoView = DateTrainInfoView().then {
-        $0.configure(
-            dateText: "2025년 10월 31일 (금)",
-            trainInfoText: "KTX 171 · 1호차 12A"
-        )
-    }
+    let dateTrainInfoView = DateTrainInfoView()
     
-    let routeInfoView = RouteInfoView().then {
-        $0.configure(
-            departureCity: "서울",
-            departureTime: "06:48",
-            arrivalCity: "부산",
-            arrivalTime: "10:09"
-        )
-    }
+    let routeInfoView = RouteInfoView()
     
     let topContainerView = UIView()
     let separator1 = DividerView()
@@ -73,6 +61,9 @@ final class CheckoutView: BaseView {
     }
     
     let soldierDiscountApplyView = DiscountApplyView()
+    
+    
+    // MARK: - Setup
     
     override func setUI() {
         addSubviews(
@@ -221,4 +212,33 @@ final class CheckoutView: BaseView {
             $0.bottom.equalToSuperview()
         }
     }
+    
+    
+    // MARK: - Configure
+    
+    func configure(with reservation: TrainReservation) {
+        let info = reservation.trainInfo
+        
+        let trainTag = TrainTagType.from(apiType: info.type)
+        
+        dateTrainInfoView.configure(
+            dateText: "2025년 12월 1일 (월)",
+            trainInfoText: "\(trainTag.title) \(info.trainNumber)"
+        )
+        
+        routeInfoView.configure(
+            departureCity: info.origin,
+            departureTime: info.startAt,
+            arrivalCity: info.destination,
+            arrivalTime: info.arriveAt
+        )
+        
+        paymentView.updatePrice(
+            fare: info.price,
+            fee: 0,
+            discountFare: 0,
+            discountFee: 0
+        )
+    }
 }
+

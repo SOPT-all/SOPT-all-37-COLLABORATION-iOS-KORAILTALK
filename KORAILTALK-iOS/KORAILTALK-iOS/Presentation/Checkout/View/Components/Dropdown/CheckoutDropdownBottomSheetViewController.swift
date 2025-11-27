@@ -44,6 +44,7 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
     var onSelect: ((String) -> Void)?
     
     private var containerBottomConstraint: Constraint?
+    private var containerHeightConstraint: Constraint?
     private var didExpandOnce = false
     
     
@@ -103,6 +104,9 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
                 .equalTo(view.snp.bottom)
                 .offset(300)
                 .constraint
+            containerHeightConstraint = $0.height
+                .equalTo(calculatedContainerHeight())
+                .constraint
             $0.top.greaterThanOrEqualTo(view.safeAreaLayoutGuide.snp.top).offset(40)
         }
         
@@ -142,6 +146,14 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
         }
     }
     
+    private func calculatedContainerHeight() -> CGFloat {
+        let itemHeight: CGFloat = 48
+        let basePadding: CGFloat = 80
+        let contentHeight = CGFloat(items.count) * itemHeight + basePadding
+        let minHeight: CGFloat = 140
+        return max(contentHeight, minHeight)
+    }
+    
     
     // MARK: - Animations
     
@@ -179,3 +191,4 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
         dismissSheetAnimated()
     }
 }
+
