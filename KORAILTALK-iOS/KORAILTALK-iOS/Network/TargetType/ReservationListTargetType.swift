@@ -8,7 +8,14 @@
 import Foundation
 
 enum ReservationListTargetType: TargetType {
-    case fetchReservationTypeKTX
+    case fetchReservation(
+        origin: String,
+        destination: String,
+        trainType: String?,
+        seatType: String?,
+        isBookAvailable: Bool?,
+        cursor: String? 
+    )
     
     var baseURL: String {
         return Environment.baseURL
@@ -16,32 +23,44 @@ enum ReservationListTargetType: TargetType {
     
     var path: String {
         switch self {
-        case .fetchReservationTypeKTX:
-            return "/api/v1/trains?origin=서울&destination=부산&trainType=KTX"
+        case let .fetchReservation(origin, destination, trainType, seatType, isBookAvailable, cursor):
+            var path = "/api/v1/trains?origin=\(origin)&destination=\(destination)"
+            
+            if let trainType {
+                path += "&trainType=\(trainType)"
+            }
+            if let seatType {
+                path += "&seatType=\(seatType)"
+            }
+            if let isBookAvailable {
+                path += "&isBookAvailable=\(isBookAvailable)"
+            }
+            if let cursor {
+                path += "&cursor=\(cursor)"
+            }
+            
+            return path
         }
-        
     }
     
     var method: HTTPMethod {
         switch self {
-            case .fetchReservationTypeKTX:
+        case .fetchReservation:
             return .get
         }
-        
     }
-        
     
     var task: NetworkTask {
         switch self {
-        case .fetchReservationTypeKTX:
+        case .fetchReservation:
             return .requestPlain
         }
     }
     
-    
     var headers: HeaderField {
-        return .contentTypeJSON
+        switch self {
+        case .fetchReservation:
+            return .contentTypeJSON
+        }
     }
-    
-    
 }

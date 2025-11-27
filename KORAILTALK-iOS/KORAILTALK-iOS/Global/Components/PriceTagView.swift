@@ -10,7 +10,6 @@ import UIKit
 import SnapKit
 import Then
 
-
 final class PriceTagView: BaseView {
     
     private let roomLabel = UILabel()
@@ -18,12 +17,13 @@ final class PriceTagView: BaseView {
     
     var isSelected: Bool = false {
         didSet {
-            updateSelectedStyle()
+            updateStyle()
         }
     }
+    
     var isDisabled: Bool = false {
         didSet {
-            updateDisabledStyle()
+            updateStyle()
         }
     }
     
@@ -34,36 +34,32 @@ final class PriceTagView: BaseView {
         setStyle()
         setUI()
         setLayout()
-        updateSelectedStyle()
+        updateStyle()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func updateSelectedStyle() {
-        guard !isDisabled else { return }
-        if isSelected {
+    private func updateStyle() {
+        if isDisabled {
+            layer.borderWidth = 0
+            layer.borderColor = UIColor.clear.cgColor
+            backgroundColor = .gray200
+            roomLabel.textColor = .gray300
+            priceLabel.textColor = .gray300
+        } else if isSelected {
             layer.borderWidth = 1
             layer.borderColor = UIColor.primary400.cgColor
             backgroundColor = .primary200
             roomLabel.textColor = .primary400
             priceLabel.textColor = .primary400
-        }else {
+        } else {
+            layer.borderWidth = 1
             layer.borderColor = UIColor.gray200.cgColor
             backgroundColor = .mainWhite
             roomLabel.textColor = .mainBlack
             priceLabel.textColor = .mainBlack
-        }
-    }
-    private func updateDisabledStyle() {
-        if isDisabled {
-            layer.borderWidth = 0
-            backgroundColor = .gray200
-            roomLabel.textColor = .gray300
-            priceLabel.textColor = .gray300
-        } else {
-            updateSelectedStyle()
         }
     }
     
@@ -71,11 +67,6 @@ final class PriceTagView: BaseView {
         layer.cornerRadius = 8
         roomLabel.font = .body1_r_16
         priceLabel.font = .body1_r_16
-        layer.borderWidth = 1
-        layer.borderColor = UIColor.gray200.cgColor
-        backgroundColor = .mainWhite
-        roomLabel.textColor = .mainBlack
-        priceLabel.textColor = .mainBlack        
     }
     
     override func setUI() {
@@ -96,3 +87,4 @@ final class PriceTagView: BaseView {
         }
     }
 }
+

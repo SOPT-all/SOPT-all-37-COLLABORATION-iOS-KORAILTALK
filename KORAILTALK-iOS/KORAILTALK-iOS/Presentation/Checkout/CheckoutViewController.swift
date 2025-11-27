@@ -2,7 +2,7 @@
 //  CheckoutViewController.swift
 //  KORAILTALK-iOS
 //
-//  Created by sumin Kong on 11/26/25.
+//  Created by sun on 11/26/25.
 //
 
 import UIKit
@@ -10,79 +10,50 @@ import UIKit
 import SnapKit
 import Then
 
-final class CheckoutViewController: BaseViewController {
+final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
+    
+    private enum TargetApplyType {
+        case coupon
+        case veteran
+        case soldier
+    }
     
     // MARK: - Properties
     
-    private let reservationId: Int
+    private let trainId: Int
+    private let seatType: SeatType
+    private var reservationId: Int?
+    private var selectedCouponRate: Int?
+    
+    private let trainReservationService: TrainReservationServiceProtocol
     private let cancelReservationService: CancelReservationServiceProtocol
+    private let veteransService: VeteranVerificationServiceProtocol = VeteranVerificationService()
     
+    private var modalView: CheckModalView?
     
-    // MARK: - UI
+    private var veteransId: String = ""
+    private var password: String = ""
+    private var birth: String = ""
     
-    private let navigationBar = NavigationBar(style: .payment)
-    private let statusBarBackgroundView = UIView().then {
-        $0.backgroundColor = .primary700
-    }
+    private let checkoutView = CheckoutView()
+    private var trainReservation: TrainReservation?
     
-    private let scrollView = UIScrollView()
-    private let contentView = UIView()
-    
-    private let footerView = CheckoutFooterView()
-    private let checkoutInfoView = CheckoutInfoView()
-    
-    private let dateTrainInfoView = DateTrainInfoView().then {
-        $0.configure(
-            dateText: "2025년 10월 31일 (금)",
-            trainInfoText: "KTX 171 · 1호차 12A"
-        )
-    }
-    
-    private let routeInfoView = RouteInfoView().then {
-        $0.configure(
-            departureCity: "서울",
-            departureTime: "06:48",
-            arrivalCity: "부산",
-            arrivalTime: "10:09"
-        )
-    }
-    
-    private let topContainerView = UIView()
-    private let separator1 = DividerView()
-    private let separator2 = DividerView()
-    
-    private let paymentView = PaymentView()
-    
-    private let couponSectionHeaderView = SectionHeaderView().then {
-        $0.configure(title: "할인 쿠폰 적용")
-    }
-    
-    private let discountApplyView = DiscountApplyView()
-    
-    private let veteranSectionHeaderView = SectionHeaderView().then {
-        $0.configure(title: "국가 유공자 할인")
-    }
-    
-    private let veteranDiscountView = DiscountView()
-    
-    private let guardianSectionHeaderView = SectionHeaderView().then {
-        $0.configure(title: "중증 보호자 할인", rightText: "적용대상 없음")
-    }
-    
-    private let soldierSectionHeaderView = SectionHeaderView().then {
-        $0.configure(title: "현역병 할인")
-    }
-    
-    private let soldierDiscountApplyView = DiscountApplyView()
+    private var couponTargetIndex: Int?
+    private var veteranTargetIndex: Int?
+    private var soldierTargetIndex: Int?
     
     
     // MARK: - Init
     
     init(
-        reservationId: Int,
+        trainId: Int,
+        seatType: SeatType,
+        trainReservationService: TrainReservationServiceProtocol = TrainReservationService(),
         cancelReservationService: CancelReservationServiceProtocol = CancelReservationService()
     ) {
-        self.reservationId = reservationId
+        self.trainId = trainId
+        self.seatType = seatType
+        self.trainReservationService = trainReservationService
         self.cancelReservationService = cancelReservationService
         super.init(nibName: nil, bundle: nil)
     }
@@ -98,147 +69,62 @@ final class CheckoutViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .mainWhite
-        setUI()
-        setLayout()
+        
+        setupView()
+        bindNavigationBar()
         bindFooter()
         bindDiscountApplyView()
+        setupVeteranDiscountBindings()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        Task { [weak self] in
+            await self?.fetchTrainReservation()
+        }
     }
     
     
-    // MARK: - Setup
+    // MARK: - Setup View
     
-    func setUI() {
-        view.addSubviews(
-            statusBarBackgroundView,
-            navigationBar,
-            scrollView,
-            footerView
-        )
-        
-        scrollView.addSubview(contentView)
-        
-        contentView.addSubviews(
-            topContainerView,
-            couponSectionHeaderView,
-            discountApplyView,
-            veteranSectionHeaderView,
-            veteranDiscountView,
-            guardianSectionHeaderView,
-            soldierSectionHeaderView,
-            soldierDiscountApplyView,
-            checkoutInfoView
-        )
-        
-        topContainerView.addSubviews(
-            dateTrainInfoView,
-            separator1,
-            routeInfoView,
-            separator2,
-            paymentView
-        )
-        
-        discountApplyView.configureForCouponSection()
-        soldierDiscountApplyView.configureForTargetOnly()
-    }
-    
-    func setLayout() {
-        statusBarBackgroundView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(navigationBar.snp.top)
-        }
-        
-        navigationBar.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(50)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        footerView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        scrollView.snp.makeConstraints {
-            $0.top.equalTo(navigationBar.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(footerView.snp.top)
-        }
-        
-        contentView.snp.makeConstraints {
+    private func setupView() {
+        view.addSubview(checkoutView)
+        checkoutView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.width.equalToSuperview()
+        }
+    }
+    
+    private func bindNavigationBar() {
+        let navBar = checkoutView.navigationBar
+        
+        navBar.onTapBack = { [weak self] in
+            guard let self else { return }
+            
+            if let navigationController = self.navigationController {
+                navigationController.popViewController(animated: true)
+            } else {
+                self.dismiss(animated: true)
+            }
         }
         
-        topContainerView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(16)
+        navBar.onTapCancel = { [weak self] in
+            self?.navigateToHome()
         }
-        
-        dateTrainInfoView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        separator1.snp.makeConstraints {
-            $0.top.equalTo(dateTrainInfoView.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1)
-        }
-        
-        routeInfoView.snp.makeConstraints {
-            $0.top.equalTo(separator1.snp.bottom).offset(16)
-            $0.centerX.equalToSuperview()
-        }
-        
-        separator2.snp.makeConstraints {
-            $0.top.equalTo(routeInfoView.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1)
-        }
-        
-        paymentView.snp.makeConstraints {
-            $0.top.equalTo(separator2.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-24)
-        }
-        
-        couponSectionHeaderView.snp.makeConstraints {
-            $0.top.equalTo(topContainerView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        discountApplyView.snp.makeConstraints {
-            $0.top.equalTo(couponSectionHeaderView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        veteranSectionHeaderView.snp.makeConstraints {
-            $0.top.equalTo(discountApplyView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        veteranDiscountView.snp.makeConstraints {
-            $0.top.equalTo(veteranSectionHeaderView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        guardianSectionHeaderView.snp.makeConstraints {
-            $0.top.equalTo(veteranDiscountView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        soldierSectionHeaderView.snp.makeConstraints {
-            $0.top.equalTo(guardianSectionHeaderView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        soldierDiscountApplyView.snp.makeConstraints {
-            $0.top.equalTo(soldierSectionHeaderView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        checkoutInfoView.snp.makeConstraints {
-            $0.top.equalTo(soldierDiscountApplyView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview()
+    }
+    
+    private func navigateToHome() {
+        if let navigationController {
+            if let homeVC = navigationController.viewControllers.first(where: { $0 is HomeViewController }) {
+                navigationController.popToViewController(homeVC, animated: true)
+            } else {
+                let homeVC = HomeViewController()
+                navigationController.setViewControllers([homeVC], animated: true)
+            }
+        } else {
+            let homeVC = HomeViewController()
+            homeVC.modalPresentationStyle = .fullScreen
+            present(homeVC, animated: true)
         }
     }
     
@@ -246,29 +132,40 @@ final class CheckoutViewController: BaseViewController {
     // MARK: - Bind
     
     private func bindFooter() {
-        footerView.onTapCancelConfirm = { [weak self] in
+        checkoutView.footerView.onTapCancelConfirm = { [weak self] in
             Task { await self?.handleCancelReservation() }
         }
     }
     
     private func bindDiscountApplyView() {
-        discountApplyView.couponButton.addTarget(
+        checkoutView.discountApplyView.couponButton.addTarget(
             self,
             action: #selector(didTapCouponButton),
             for: .touchUpInside
         )
         
-        discountApplyView.targetButton.addTarget(
+        checkoutView.discountApplyView.targetButton.addTarget(
             self,
-            action: #selector(didTapTargetButton),
+            action: #selector(didTapCouponTargetButton),
             for: .touchUpInside
         )
         
-        soldierDiscountApplyView.targetButton.addTarget(
+        checkoutView.veteranTargetApplyView.targetButton.addTarget(
+            self,
+            action: #selector(didTapVeteranTargetButton),
+            for: .touchUpInside
+        )
+        
+        checkoutView.soldierDiscountApplyView.targetButton.addTarget(
             self,
             action: #selector(didTapSoldierTargetButton),
             for: .touchUpInside
         )
+    }
+    
+    private func setupVeteranDiscountBindings() {
+        let veteranView = checkoutView.veteranDiscountView
+        veteranView.checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
     }
     
     
@@ -280,70 +177,148 @@ final class CheckoutViewController: BaseViewController {
     }
     
     @objc
-    private func didTapTargetButton() {
-        presentTargetBottomSheet()
+    private func didTapCouponTargetButton() {
+        presentTargetBottomSheet(for: .coupon)
+    }
+    
+    @objc
+    private func didTapVeteranTargetButton() {
+        presentTargetBottomSheet(for: .veteran)
     }
     
     @objc
     private func didTapSoldierTargetButton() {
-        presentSoldierTargetBottomSheet()
+        presentTargetBottomSheet(for: .soldier)
+    }
+    
+    @objc
+    private func checkButtonDidTap() {
+        let veteranView = checkoutView.veteranDiscountView
+        let agreementView = checkoutView.personalInfoAgreementView
+        
+        if !agreementView.isAgreed {
+            showModal(
+                question: "개인정보 수집 및 이용에 동의해주세요.",
+                confirmColor: .primary500
+            )
+            return
+        }
+        
+        veteransId = veteranView.veteransTextField.text ?? ""
+        password = veteranView.passwordTextField.text ?? ""
+        birth = veteranView.birthTextField.text ?? ""
+        
+        postVeteranVerification()
+    }
+    
+    
+    // MARK: - Coupon Logic
+
+    private func applyCoupon(discountRate: Int) {
+        guard let reservation = trainReservation else { return }
+
+        let price = reservation.trainInfo.price
+        let discount = -price.discount(by: discountRate)
+
+        checkoutView.paymentView.updatePrice(
+            fare: price,
+            fee: 0,
+            discountFare: discount,
+            discountFee: 0
+        )
+        
+        let total = price + discount
+        checkoutView.footerView.updateTotalPaymentAmount(total.formattedPrice)
     }
     
     
     // MARK: - BottomSheet
     
     private func presentCouponBottomSheet() {
-        let couponItems = [
-            "10% 할인 쿠폰",
-            "주말 특가 쿠폰",
-            "왕복 승차권 3,000원 할인"
-        ]
-        
+        guard let reservation = trainReservation else { return }
+
+        let coupons = reservation.coupons
+
+        let couponItems = coupons.map { coupon in
+            "운임의 \(coupon.discountRate)% 할인"
+        }
+
         let vc = CheckoutDropdownBottomSheetViewController(
             placeholder: "적용할 쿠폰 선택",
-            items: couponItems
+            items: couponItems,
+            disabledIndexes: []
         )
-        
-        vc.onSelect = { [weak self] selected in
-            self?.discountApplyView.couponButton.updateSelected(text: selected)
+
+        vc.onSelect = { [weak self] index, selected in
+            guard let self else { return }
+
+            self.checkoutView.discountApplyView.couponButton.updateSelected(text: selected)
+
+            if coupons.indices.contains(index) {
+                let coupon = coupons[index]
+                self.applyCoupon(discountRate: coupon.discountRate)
+            } else if let coupon = coupons.first(where: { selected.contains("\($0.discountRate)%") }) {
+                self.applyCoupon(discountRate: coupon.discountRate)
+            }
         }
-        
+
         present(vc, animated: true)
     }
     
-    private func presentTargetBottomSheet() {
-        let targetItems = [
-            "성인 1명",
-            "청소년 1명",
-            "어린이 1명",
-            "경로 1명"
-        ]
-        
-        let vc = CheckoutDropdownBottomSheetViewController(
-            placeholder: "적용할 승객 선택",
-            items: targetItems
-        )
-        
-        vc.onSelect = { [weak self] selected in
-            self?.discountApplyView.targetButton.updateSelected(text: selected)
+    private func presentTargetBottomSheet(for type: TargetApplyType) {
+        guard let reservation = trainReservation else {
+            let vc = CheckoutDropdownBottomSheetViewController(
+                placeholder: "할인 쿠폰 적용 대상 선택",
+                items: ["적용 가능한 승객이 없습니다."],
+                disabledIndexes: []
+            )
+            
+            vc.onSelect = { _, _ in }
+            
+            present(vc, animated: true)
+            return
         }
         
-        present(vc, animated: true)
-    }
-    
-    private func presentSoldierTargetBottomSheet() {
-        let soldierTargets = [
-            "본인(현역병)",
-            "동반 보호자 1명"
-        ]
+        let info = reservation.trainInfo
+        let priceText = info.price.formattedPrice
+
+        let items = ["어른 - 1호차 12A / \(priceText)"]
+        
+        var disabled = Set([couponTargetIndex, veteranTargetIndex, soldierTargetIndex].compactMap { $0 })
+        
+        let currentIndex: Int?
+        switch type {
+        case .coupon:
+            currentIndex = couponTargetIndex
+        case .veteran:
+            currentIndex = veteranTargetIndex
+        case .soldier:
+            currentIndex = soldierTargetIndex
+        }
+        if let currentIndex {
+            disabled.remove(currentIndex)
+        }
         
         let vc = CheckoutDropdownBottomSheetViewController(
-            placeholder: "할인 적용 대상 선택",
-            items: soldierTargets
+            placeholder: "할인 쿠폰 적용 대상 선택",
+            items: items,
+            disabledIndexes: disabled
         )
         
-        vc.onSelect = { [weak self] selected in
-            self?.soldierDiscountApplyView.targetButton.updateSelected(text: selected)
+        vc.onSelect = { [weak self] index, selected in
+            guard let self else { return }
+            
+            switch type {
+            case .coupon:
+                self.couponTargetIndex = index
+                self.checkoutView.discountApplyView.targetButton.updateSelected(text: selected)
+            case .veteran:
+                self.veteranTargetIndex = index
+                self.checkoutView.veteranTargetApplyView.targetButton.updateSelected(text: selected)
+            case .soldier:
+                self.soldierTargetIndex = index
+                self.checkoutView.soldierDiscountApplyView.targetButton.updateSelected(text: selected)
+            }
         }
         
         present(vc, animated: true)
@@ -353,12 +328,103 @@ final class CheckoutViewController: BaseViewController {
     // MARK: - Network
     
     @MainActor
+    private func fetchTrainReservation() async {
+        do {
+            let reservation = try await trainReservationService.getTrainReservation(
+                trainId: trainId,
+                seatType: seatType
+            )
+            trainReservation = reservation
+            reservationId = reservation.trainInfo.reservationId
+            checkoutView.configure(with: reservation)
+            
+            let price = reservation.trainInfo.price
+            checkoutView.footerView.updateTotalPaymentAmount(price.formattedPrice)
+            
+        } catch {
+            print("❌ 열차 예약 조회 실패: \(error)")
+        }
+    }
+    
+    @MainActor
     private func handleCancelReservation() async {
+        guard let reservationId else {
+            return
+        }
+        
         do {
             try await cancelReservationService.cancelReservation(reservationId: reservationId)
-            navigationController?.popViewController(animated: true)
+            
+            showModal(
+                question: "예약이 취소되었습니다.",
+                confirmColor: .primary500,
+                confirmAction: { [weak self] in
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            )
         } catch {
             print("❌ 예약 취소 실패: \(error)")
         }
     }
+    
+    private func postVeteranVerification() {
+        Task {
+            do {
+                let veteransVerification = try await veteransService.verifyVeteran(
+                    nationalId: veteransId,
+                    password: password,
+                    birthdate: birth
+                )
+                
+                await MainActor.run {
+                    let veteranView = self.checkoutView.veteranDiscountView
+                    let agreementView = self.checkoutView.personalInfoAgreementView
+                    
+                    if veteransVerification.verified {
+                        self.showModal(question: "인증되었습니다.", confirmColor: .primary500)
+                    } else {
+                        self.showModal(question: "해당 보훈번호가 인증되지 않았습니다.", confirmColor: .primary500)
+                        
+                        veteranView.veteransTextField.text = ""
+                        veteranView.passwordTextField.text = ""
+                        veteranView.birthTextField.text = ""
+                        
+                        agreementView.checkBoxButton.isChecked = false
+                        
+                        veteranView.checkButton.isSelected = false
+                        veteranView.checkButton.isEnabled = false
+                    }
+                }
+            } catch {
+                print("❌ 보훈 인증 실패:", error.localizedDescription)
+            }
+        }
+    }
+    
+    
+    // MARK: - Modal
+    
+    private func showModal(
+        question: String,
+        confirmColor: UIColor,
+        confirmAction: (() -> Void)? = nil
+    ) {
+        modalView?.removeFromSuperview()
+        
+        let modal = CheckModalView()
+        modal.configure(question: question, confirmText: "확인", confirmColor: confirmColor)
+        view.addSubview(modal)
+        modal.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.equalTo(304)
+            $0.height.equalTo(148)
+        }
+        self.modalView = modal
+        
+        modal.confirmButton.addAction(.init(handler: { _ in
+            confirmAction?()
+            modal.removeFromSuperview()
+        }), for: .touchUpInside)
+    }
 }
+

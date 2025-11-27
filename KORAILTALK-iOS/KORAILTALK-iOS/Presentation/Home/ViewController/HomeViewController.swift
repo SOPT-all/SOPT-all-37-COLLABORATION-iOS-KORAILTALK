@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 import SnapKit
 import Then
 
@@ -14,21 +15,27 @@ final class HomeViewController: BaseViewController {
     // MARK: - Properties
     
     private let menuData = ServiceMenuModel.mockData
-    
     private let homeService = HomeInformationService()
+    private var homeInformation: HomeInformation?
     
     // MARK: - UI Components
+    
     private let headerBackgroundView = UIView().then {
         $0.backgroundColor = .primary700
     }
+    
     private let navBar = NavigationBar(style: .home)
+    
     private let titleLabel = UILabel().then {
         $0.font = .head3_sb_18
         $0.textColor = .primary700
         $0.text = "어디로 가시겠어요?"
     }
+    
     private let ticketSearchFormView = TicketSearchFormView()
     private let serviceMenuView = ServiceMenuView()
+    
+    // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,19 +53,30 @@ final class HomeViewController: BaseViewController {
         serviceMenuView.collectionView.delegate = self
     }
     
+    override func setAddTarget() {
+        ticketSearchFormView.searchButton.addTarget(
+            self,
+            action: #selector(didTapTrainSearchButton),
+            for: .touchUpInside
+        )
+    }
+    
+    // MARK: - Network
+    
     private func fetchHomeData() {
         Task {
             do {
                 let data = try await homeService.getHomeInformation()
+                self.homeInformation = data
                 ticketSearchFormView.configure(with: data)
-                
                 print("홈 데이터 로드 성공: \(data)")
-                
             } catch {
                 print("홈 데이터 로드 실패: \(error)")
             }
         }
     }
+    
+    // MARK: - UI Setup
     
     private func setupStyle() {
         view.backgroundColor = .gray50
@@ -75,16 +93,14 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setupLayout() {
-        headerBackgroundView.snp.makeConstraints{
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(35)
+        headerBackgroundView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(navBar.snp.top)
         }
         
-        navBar.snp.makeConstraints{
-            $0.top.equalTo(headerBackgroundView.snp.bottom)
+        navBar.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(50)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(35)
         }
         
         titleLabel.snp.makeConstraints {
@@ -106,6 +122,19 @@ final class HomeViewController: BaseViewController {
         }
     }
     
+    // MARK: - Actions
+    
+    @objc
+    private func didTapTrainSearchButton() {
+        let reservationVC = ReservationViewController()
+        
+        let stations = ticketSearchFormView.currentStations()
+        reservationVC.configure(origin: stations.origin, destination: stations.destination)
+        
+        reservationVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(reservationVC, animated: true)
+    }
+    
 }
 
 // MARK: - UICollectionView DataSource & Delegate
@@ -116,7 +145,8 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         return menuData.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ServiceMenuCell.identifier,
             for: indexPath
@@ -133,3 +163,4 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         print("\(menuData[indexPath.item].title) 클릭됨!")
     }
 }
+

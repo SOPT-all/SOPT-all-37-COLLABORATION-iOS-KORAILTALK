@@ -58,3 +58,31 @@ enum TrainTagType: String, CaseIterable {
         }
     }
 }
+
+extension TrainTagType {
+    static func from(apiType: String) -> TrainTagType {
+        switch apiType {
+        case "KTX":
+            return .ktx
+        case "ITX_S":
+            return .itxSaemaeul
+        case "ITX_M":
+            return .itxMaeum
+        case "FLOWER":
+            return .mugunghwa
+        default:
+            return .all
+        }
+    }
+}
+
+extension TrainTagType {
+    var queryTrainType: String? {
+        switch self {
+        case .all:
+            return nil
+        default:
+            return self.rawValue
+        }
+    }
+}

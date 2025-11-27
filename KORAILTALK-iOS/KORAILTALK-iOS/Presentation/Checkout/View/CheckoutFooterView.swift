@@ -43,6 +43,8 @@ final class CheckoutFooterView: BaseView {
         $0.setTitle("다음", for: .normal)
         $0.setTitleColor(.primary700, for: .normal)
         $0.titleLabel?.font = .body1_r_16
+        $0.isEnabled = false
+        $0.isUserInteractionEnabled = false
     }
     
     private lazy var bottomButtonStackView = UIStackView(arrangedSubviews: [
@@ -124,16 +126,18 @@ final class CheckoutFooterView: BaseView {
             confirmColor: .pointRed,
             showNoButton: true
         )
-        
-        guard let parentView = superview else { return }
-        
+
+        guard let parentView = self.window else {
+            return
+        }
+
         if dimView.superview == nil {
             parentView.addSubview(dimView)
             dimView.snp.makeConstraints {
                 $0.edges.equalToSuperview()
             }
         }
-        
+
         if modalView.superview == nil {
             parentView.addSubview(modalView)
             modalView.snp.makeConstraints {
@@ -142,17 +146,18 @@ final class CheckoutFooterView: BaseView {
                 $0.height.equalTo(160)
             }
         }
-        
+
         dimView.alpha = 0
         modalView.alpha = 0
         modalView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        
+
         UIView.animate(withDuration: 0.25) {
             self.dimView.alpha = 1
             self.modalView.alpha = 1
             self.modalView.transform = .identity
         }
     }
+
     
     private func dismissModal() {
         UIView.animate(withDuration: 0.25, animations: {

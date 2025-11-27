@@ -17,7 +17,7 @@ enum TrainReservationTargetType: TargetType {
     var path: String {
         switch self {
         case .fetchTrainReservation(let trainId, _):
-            return "/trains/\(trainId)/reservation"
+            return "/api/v1/trains/\(trainId)"
         }
     }
     

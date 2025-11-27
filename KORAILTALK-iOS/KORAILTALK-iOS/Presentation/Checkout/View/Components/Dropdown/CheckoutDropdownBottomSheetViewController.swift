@@ -40,18 +40,26 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
     
     private let placeholder: String
     private let items: [String]
+    private let disabledIndexes: Set<Int>
     
-    var onSelect: ((String) -> Void)?
+    /// 선택된 인덱스와 값 전달
+    var onSelect: ((Int, String) -> Void)?
     
     private var containerBottomConstraint: Constraint?
+    private var containerHeightConstraint: Constraint?
     private var didExpandOnce = false
     
     
     // MARK: - Init
     
-    init(placeholder: String, items: [String]) {
+    init(
+        placeholder: String,
+        items: [String],
+        disabledIndexes: Set<Int> = []
+    ) {
         self.placeholder = placeholder
         self.items = items
+        self.disabledIndexes = disabledIndexes
         super.init(nibName: nil, bundle: nil)
         
         modalPresentationStyle = .overFullScreen
@@ -103,6 +111,9 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
                 .equalTo(view.snp.bottom)
                 .offset(300)
                 .constraint
+            containerHeightConstraint = $0.height
+                .equalTo(calculatedContainerHeight())
+                .constraint
             $0.top.greaterThanOrEqualTo(view.safeAreaLayoutGuide.snp.top).offset(40)
         }
         
@@ -134,12 +145,19 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
     
     private func setupDropdown() {
         dropdownView.configure(placeholder: placeholder, items: items)
+        dropdownView.disabledIndexes = disabledIndexes
         
-        dropdownView.onSelect = { [weak self] value in
-            self?.dismissSheetAnimated {
-                self?.onSelect?(value)
-            }
+        dropdownView.onSelect = { [weak self] value, index in
+            self?.onSelect?(index, value)
         }
+    }
+    
+    private func calculatedContainerHeight() -> CGFloat {
+        let itemHeight: CGFloat = 48
+        let basePadding: CGFloat = 80
+        let contentHeight = CGFloat(items.count) * itemHeight + basePadding
+        let minHeight: CGFloat = 140
+        return max(contentHeight, minHeight)
     }
     
     
@@ -179,3 +197,4 @@ final class CheckoutDropdownBottomSheetViewController: BaseViewController {
         dismissSheetAnimated()
     }
 }
+

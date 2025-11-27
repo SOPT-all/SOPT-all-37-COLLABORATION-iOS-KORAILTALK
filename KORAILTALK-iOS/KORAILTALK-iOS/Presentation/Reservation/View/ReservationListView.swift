@@ -20,7 +20,8 @@ final class ReservationListView: BaseView {
     //MARK: - Properties
     
     private var trainSchedules: [TrainSchedule] = []
-
+    
+    var onSelectSchedule: ((TrainSchedule) -> Void)?
     
     //MARK: - SetUI
     
@@ -42,7 +43,6 @@ final class ReservationListView: BaseView {
             $0.register(ReservationListCell.self, forCellWithReuseIdentifier: ReservationListCell.reuseIdentifier)
             $0.backgroundColor = .gray100
             $0.showsVerticalScrollIndicator = false
-
         }
     }
     
@@ -53,7 +53,6 @@ final class ReservationListView: BaseView {
             $0.edges.equalToSuperview()
         }
     }
-    
     
     //MARK: - Public
     
@@ -74,11 +73,11 @@ extension ReservationListView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: ReservationListCell.reuseIdentifier,
-                for: indexPath
-            ) as? ReservationListCell else {
-                return UICollectionViewCell()
-            }
+            withReuseIdentifier: ReservationListCell.reuseIdentifier,
+            for: indexPath
+        ) as? ReservationListCell else {
+            return UICollectionViewCell()
+        }
         cell.configure(schedule: trainSchedules[indexPath.row])
         
         return cell
@@ -91,9 +90,8 @@ extension ReservationListView: UICollectionViewDataSource {
 extension ReservationListView: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        //TODO: -  셀이 선택 되었을 때 동작 만들기
-        
+        let schedule = trainSchedules[indexPath.row]
+        onSelectSchedule?(schedule)
     }
 }
 
@@ -105,19 +103,21 @@ extension ReservationListView: UICollectionViewDelegateFlowLayout {
         let horizontalInset: CGFloat = 16
         let width = collectionView.bounds.width - (horizontalInset * 2)
         
-        let isSoldOut = (trainSchedules[indexPath.row].normalSeatStatus  == .soldOut && trainSchedules[indexPath.row].premiumSeatStatus  == .soldOut)
+        let isSoldOut = (trainSchedules[indexPath.row].normalSeatStatus  == nil
+                         && trainSchedules[indexPath.row].premiumSeatStatus  == nil)
         
         if isSoldOut {
             return CGSize(width: width, height: 96)
         }
         return CGSize(width: width, height: 128)
-      }
+    }
 
-      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-          return 8
-      }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 8
+    }
       
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-          return UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16)
-      }
+        return UIEdgeInsets(top: 8, left: 16, bottom: 0, right: 16)
+    }
 }
+
