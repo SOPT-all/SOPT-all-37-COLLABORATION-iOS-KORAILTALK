@@ -225,7 +225,8 @@ final class ReservationViewController: BaseViewController {
         
         modal.onTapReserve = { [weak self] in
             guard let self = self else { return }
-            let checkoutVC = CheckoutViewController(reservationId: 17)
+            let checkoutVC = CheckoutViewController(trainId: 1,
+                                                    seatType: .normal)
             self.navigationController?.pushViewController(checkoutVC, animated: true)
         }
         
