@@ -300,13 +300,19 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     @MainActor
     private func handleCancelReservation() async {
         guard let reservationId else {
-            print("❌ 예약 ID 없음")
             return
         }
         
         do {
             try await cancelReservationService.cancelReservation(reservationId: reservationId)
-            navigationController?.popViewController(animated: true)
+            
+            showModal(
+                question: "예약이 취소되었습니다.",
+                confirmColor: .primary500,
+                confirmAction: { [weak self] in
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            )
         } catch {
             print("❌ 예약 취소 실패: \(error)")
         }
