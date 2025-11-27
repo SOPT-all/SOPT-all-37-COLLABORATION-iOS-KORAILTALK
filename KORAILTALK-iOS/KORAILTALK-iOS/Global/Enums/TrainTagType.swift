@@ -64,8 +64,6 @@ extension TrainTagType {
         switch apiType {
         case "KTX":
             return .ktx
-        case "SRT":
-            return .srt
         case "ITX_S":
             return .itxSaemaeul
         case "ITX_M":
@@ -74,6 +72,17 @@ extension TrainTagType {
             return .mugunghwa
         default:
             return .all
+        }
+    }
+}
+
+extension TrainTagType {
+    var queryTrainType: String? {
+        switch self {
+        case .all:
+            return nil
+        default:
+            return self.rawValue
         }
     }
 }

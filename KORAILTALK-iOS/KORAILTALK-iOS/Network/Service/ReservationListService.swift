@@ -8,14 +8,37 @@
 import Foundation
 
 protocol ReservationListServiceProtocol {
-    func getReservationList() async throws -> TrainSearchResult
+    func getReservationList(
+        origin: String,
+        destination: String,
+        trainType: String?,
+        seatType: String?,
+        isBookAvailable: Bool?,
+        cursor: String?
+    ) async throws -> TrainSearchResult
 }
 
 final class ReservationListService: BaseService<ReservationListTargetType>, ReservationListServiceProtocol {
 
-    func getReservationList() async throws -> TrainSearchResult {
+    func getReservationList(
+        origin: String,
+        destination: String,
+        trainType: String?,
+        seatType: String?,
+        isBookAvailable: Bool?,
+        cursor: String?
+    ) async throws -> TrainSearchResult {
         let baseResponse: BaseResponseBody<TrainSearchResponseDTO> =
-        try await request(with: .fetchReservationTypeKTX)
+        try await request(
+            with: .fetchReservation(
+                origin: origin,
+                destination: destination,
+                trainType: trainType,
+                seatType: seatType,
+                isBookAvailable: isBookAvailable,
+                cursor: cursor
+            )
+        )
 
         guard let dto = baseResponse.data else {
             throw NetworkError.responseError

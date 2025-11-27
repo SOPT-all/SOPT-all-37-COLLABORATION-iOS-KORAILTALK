@@ -156,16 +156,24 @@ final class ReservationListCell: UICollectionViewCell,ReuseIdentifiable {
             layer.backgroundColor = UIColor.gray100.cgColor
         }
         
-        if schedule.normalSeatStatus != .soldOut {
+        if let normalStatus = schedule.normalSeatStatus,
+           normalStatus != .soldOut {
             normalSeatStatus.isHidden = false
-            normalSeatStatus.configure(seatType: .normal, seatStatus: schedule.normalSeatStatus)
+            normalSeatStatus.configure(
+                seatType: .normal,
+                seatStatus: normalStatus
+            )
         } else {
             normalSeatStatus.isHidden = true
         }
-        
-        if schedule.premiumSeatStatus != .soldOut {
+
+        if let premiumStatus = schedule.premiumSeatStatus,
+           premiumStatus != .soldOut {
             premiumSeatStatus.isHidden = false
-            premiumSeatStatus.configure(seatType: .premium, seatStatus: schedule.premiumSeatStatus)
+            premiumSeatStatus.configure(
+                seatType: .premium,
+                seatStatus: premiumStatus
+            )
         } else {
             premiumSeatStatus.isHidden = true
         }
