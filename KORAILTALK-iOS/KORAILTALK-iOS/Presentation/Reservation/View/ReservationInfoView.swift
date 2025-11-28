@@ -157,5 +157,9 @@ final class ReservationInfoView: BaseView {
         originLabel.text = origin
         destinationLabel.text = destination
     }
+    
+    func getCheckBoxState() -> Bool {
+        return checkBox.isChecked
+    }
 }
 
