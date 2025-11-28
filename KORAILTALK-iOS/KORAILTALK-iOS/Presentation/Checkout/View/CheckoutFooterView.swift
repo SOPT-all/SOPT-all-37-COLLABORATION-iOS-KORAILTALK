@@ -13,6 +13,7 @@ import Then
 final class CheckoutFooterView: BaseView {
     
     var onTapCancelConfirm: (() -> Void)?
+    var onTapNext: (() -> Void)?
     
     private let totalPaymentContainerView = UIView().then {
         $0.backgroundColor = .primary700
@@ -43,8 +44,9 @@ final class CheckoutFooterView: BaseView {
         $0.setTitle("다음", for: .normal)
         $0.setTitleColor(.primary700, for: .normal)
         $0.titleLabel?.font = .body1_r_16
-        $0.isEnabled = false
-        $0.isUserInteractionEnabled = false
+        // 필요하면 외부에서 enable 제어할 수 있도록 기본값은 활성화 시켜둠
+        $0.isEnabled = true
+        $0.isUserInteractionEnabled = true
     }
     
     private lazy var bottomButtonStackView = UIStackView(arrangedSubviews: [
@@ -62,6 +64,8 @@ final class CheckoutFooterView: BaseView {
     
     private let modalView = CheckModalView()
     
+    // MARK: - Setup
+    
     override func setUI() {
         addSubviews(
             totalPaymentContainerView,
@@ -76,14 +80,16 @@ final class CheckoutFooterView: BaseView {
         bottomButtonContainerView.addSubview(bottomButtonStackView)
         
         reservationCancelButton.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
+        nextStepButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
         
         modalView.onNoTapped = { [weak self] in
             self?.dismissModal()
         }
         
         modalView.onConfirmTapped = { [weak self] in
-            self?.dismissModal()
-            self?.onTapCancelConfirm?()
+            self?.dismissModal {
+                self?.onTapCancelConfirm?()
+            }
         }
     }
     
@@ -115,9 +121,18 @@ final class CheckoutFooterView: BaseView {
         }
     }
     
+    // MARK: - Public
+    
     func updateTotalPaymentAmount(_ text: String) {
         totalPaymentAmountLabel.text = text
     }
+    
+    func setNextButtonEnabled(_ isEnabled: Bool) {
+        nextStepButton.isEnabled = isEnabled
+        nextStepButton.isUserInteractionEnabled = isEnabled
+    }
+    
+    // MARK: - Actions
     
     @objc private func didTapCancelButton() {
         modalView.configure(
@@ -157,9 +172,12 @@ final class CheckoutFooterView: BaseView {
             self.modalView.transform = .identity
         }
     }
-
     
-    private func dismissModal() {
+    @objc private func didTapNextButton() {
+        onTapNext?()
+    }
+
+    private func dismissModal(completion: (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.25, animations: {
             self.dimView.alpha = 0
             self.modalView.alpha = 0
@@ -168,6 +186,7 @@ final class CheckoutFooterView: BaseView {
             self.dimView.removeFromSuperview()
             self.modalView.removeFromSuperview()
             self.modalView.transform = .identity
+            completion?()
         })
     }
 }

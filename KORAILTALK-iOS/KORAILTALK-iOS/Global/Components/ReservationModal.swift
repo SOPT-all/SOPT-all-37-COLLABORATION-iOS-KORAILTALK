@@ -20,7 +20,12 @@ final class ReservationModal: BaseView {
     private let generalPrice: String
     private let specialPrice: String
     
-    var onTapReserve: (() -> Void)?
+    enum SeatOption {
+        case normal
+        case premium
+    }
+    
+    var onTapReserve: ((SeatOption) -> Void)?
     
     // MARK: - UI Components
     
@@ -222,7 +227,12 @@ final class ReservationModal: BaseView {
     }
     
     @objc private func didTapReservationButton() {
-        onTapReserve?()
+        if generalSeatView.isSelected {
+            onTapReserve?(.normal)
+        } else if specialSeatView.isSelected {
+            onTapReserve?(.premium)
+        } else {
+        }
     }
 }
 
