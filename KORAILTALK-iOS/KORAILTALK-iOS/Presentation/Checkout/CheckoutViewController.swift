@@ -42,6 +42,7 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     private var veteranTargetIndex: Int?
     private var soldierTargetIndex: Int?
     
+    private var isVeteranVerified: Bool = false
     
     // MARK: - Init
     
@@ -132,9 +133,14 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     // MARK: - Bind
     
     private func bindFooter() {
-        checkoutView.footerView.onTapCancelConfirm = { [weak self] in
-            // 네트워크 없이 두 번째 모달만 띄우는 플로우
+        let footer = checkoutView.footerView
+        
+        footer.onTapCancelConfirm = { [weak self] in
             self?.showCancelCompletedModal()
+        }
+        
+        footer.onTapNext = { [weak self] in
+            self?.handleTapNext()
         }
     }
     
@@ -168,9 +174,6 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         let veteranView = checkoutView.veteranDiscountView
         veteranView.checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
     }
-    
-    
-    // MARK: - Cancel Flow (네트워크 제거)
     
     private func showCancelCompletedModal() {
         showModal(
@@ -225,23 +228,71 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         postVeteranVerification()
     }
     
+    private func handleTapNext() {
+        let agreementView = checkoutView.personalInfoAgreementView
+        
+        if !agreementView.isAgreed {
+            showModal(
+                question: "개인정보 수집 및 이용에 동의해주세요.",
+                confirmColor: .primary500
+            )
+            return
+        }
+    }
+    
     
     // MARK: - Coupon Logic
-
+    
     private func applyCoupon(discountRate: Int) {
-        guard let reservation = trainReservation else { return }
-
-        let price = reservation.trainInfo.price
-        let discount = -price.discount(by: discountRate)
-
+        selectedCouponRate = discountRate
+        
+        let (fare, fee) = baseFareAndFee()
+        
+        guard couponTargetIndex != nil else {
+            checkoutView.paymentView.updatePrice(
+                fare: fare,
+                fee: fee,
+                discountFare: 0,
+                discountFee: 0
+            )
+            checkoutView.footerView.updateTotalPaymentAmount(totalBasePrice.formattedPrice)
+            return
+        }
+        
+        let discountFare = -fare.discount(by: discountRate)
+        
         checkoutView.paymentView.updatePrice(
-            fare: price,
-            fee: 0,
-            discountFare: discount,
+            fare: fare,
+            fee: fee,
+            discountFare: discountFare,
             discountFee: 0
         )
         
-        let total = price + discount
+        let total = fare + fee + discountFare
+        checkoutView.footerView.updateTotalPaymentAmount(total.formattedPrice)
+    }
+    
+    
+    // MARK: - Veteran Discount Logic
+    
+    private func applyVeteranDiscount() {
+        let (fare, fee) = baseFareAndFee()
+        
+        let discountFare: Int
+        if veteranTargetIndex != nil && isVeteranVerified {
+            discountFare = -fare
+        } else {
+            discountFare = 0
+        }
+        
+        checkoutView.paymentView.updatePrice(
+            fare: fare,
+            fee: fee,
+            discountFare: discountFare,
+            discountFee: 0
+        )
+        
+        let total = fare + fee + discountFare
         checkoutView.footerView.updateTotalPaymentAmount(total.formattedPrice)
     }
     
@@ -250,32 +301,43 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     
     private func presentCouponBottomSheet() {
         guard let reservation = trainReservation else { return }
-
+        
         let coupons = reservation.coupons
-
+        
         let couponItems = coupons.map { coupon in
             "운임의 \(coupon.discountRate)% 할인"
         }
-
+        
         let vc = CheckoutDropdownBottomSheetViewController(
             placeholder: "적용할 쿠폰 선택",
             items: couponItems,
             disabledIndexes: []
         )
-
+        
         vc.onSelect = { [weak self] index, selected in
             guard let self else { return }
-
+            
             self.checkoutView.discountApplyView.couponButton.updateSelected(text: selected)
-
+            
             if coupons.indices.contains(index) {
                 let coupon = coupons[index]
                 self.applyCoupon(discountRate: coupon.discountRate)
             } else if let coupon = coupons.first(where: { selected.contains("\($0.discountRate)%") }) {
                 self.applyCoupon(discountRate: coupon.discountRate)
+            } else {
+                self.selectedCouponRate = nil
+                let (fare, fee) = self.baseFareAndFee()
+                
+                self.checkoutView.paymentView.updatePrice(
+                    fare: fare,
+                    fee: fee,
+                    discountFare: 0,
+                    discountFee: 0
+                )
+                self.checkoutView.footerView.updateTotalPaymentAmount(self.totalBasePrice.formattedPrice)
             }
         }
-
+        
         present(vc, animated: true)
     }
     
@@ -294,9 +356,8 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
         }
         
         let info = reservation.trainInfo
-        let priceText = info.price.formattedPrice
-
-        let items = ["어른 - 1호차 12A / \(priceText)"]
+        
+        let items = ["어른 - 1호차 12A / 59,800원"]
         
         var disabled = Set([couponTargetIndex, veteranTargetIndex, soldierTargetIndex].compactMap { $0 })
         
@@ -326,9 +387,16 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
             case .coupon:
                 self.couponTargetIndex = index
                 self.checkoutView.discountApplyView.targetButton.updateSelected(text: selected)
+                
+                if let rate = self.selectedCouponRate {
+                    self.applyCoupon(discountRate: rate)
+                }
+                
             case .veteran:
                 self.veteranTargetIndex = index
                 self.checkoutView.veteranTargetApplyView.targetButton.updateSelected(text: selected)
+                self.applyVeteranDiscount()
+                
             case .soldier:
                 self.soldierTargetIndex = index
                 self.checkoutView.soldierDiscountApplyView.targetButton.updateSelected(text: selected)
@@ -344,16 +412,25 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
     @MainActor
     private func fetchTrainReservation() async {
         do {
+            let requestSeatType: SeatType = .normal
+            
             let reservation = try await trainReservationService.getTrainReservation(
                 trainId: trainId,
-                seatType: seatType
+                seatType: requestSeatType
             )
             trainReservation = reservation
             reservationId = reservation.trainInfo.reservationId
             checkoutView.configure(with: reservation)
             
-            let price = reservation.trainInfo.price
-            checkoutView.footerView.updateTotalPaymentAmount(price.formattedPrice)
+            let (fare, fee) = baseFareAndFee()
+            
+            checkoutView.paymentView.updatePrice(
+                fare: fare,
+                fee: fee,
+                discountFare: 0,
+                discountFee: 0
+            )
+            checkoutView.footerView.updateTotalPaymentAmount(totalBasePrice.formattedPrice)
             
         } catch {
             print("❌ 열차 예약 조회 실패: \(error)")
@@ -374,8 +451,13 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
                     let agreementView = self.checkoutView.personalInfoAgreementView
                     
                     if veteransVerification.verified {
+                        self.isVeteranVerified = true
+                        
                         self.showModal(question: "인증되었습니다.", confirmColor: .primary500)
+                        self.applyVeteranDiscount()
                     } else {
+                        self.isVeteranVerified = false
+                        
                         self.showModal(question: "해당 보훈번호가 인증되지 않았습니다.", confirmColor: .primary500)
                         
                         veteranView.veteransTextField.text = ""
@@ -386,6 +468,8 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
                         
                         veteranView.checkButton.isSelected = false
                         veteranView.checkButton.isEnabled = false
+                        
+                        self.applyVeteranDiscount()
                     }
                 }
             } catch {
@@ -419,5 +503,26 @@ final class CheckoutViewController: BaseViewController, UITextFieldDelegate {
             modal.removeFromSuperview()
         }), for: .touchUpInside)
     }
+    
+    private var baseFare: Int {
+        return 59_800
+    }
+    
+    private var specialFee: Int {
+        return 23_900
+    }
+    
+    private func baseFareAndFee() -> (fare: Int, fee: Int) {
+        switch seatType {
+        case .normal:
+            return (baseFare, 0)
+        default:
+            return (baseFare, specialFee)
+        }
+    }
+    
+    private var totalBasePrice: Int {
+        let (fare, fee) = baseFareAndFee()
+        return fare + fee
+    }
 }
-

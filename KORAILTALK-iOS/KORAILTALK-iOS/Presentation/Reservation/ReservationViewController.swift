@@ -323,11 +323,20 @@ final class ReservationViewController: BaseViewController {
             specialPrice: "83,700원"
         )
         
-        modal.onTapReserve = { [weak self] in
+        modal.onTapReserve = { [weak self] seatOption in
             guard let self = self else { return }
+            
+            let seatType: SeatType
+            switch seatOption {
+            case .normal:
+                seatType = .normal
+            case .premium:
+                seatType = .premium
+            }
+            
             let checkoutVC = CheckoutViewController(
                 trainId: 1,
-                seatType: .normal
+                seatType: seatType
             )
             self.navigationController?.pushViewController(checkoutVC, animated: true)
         }
