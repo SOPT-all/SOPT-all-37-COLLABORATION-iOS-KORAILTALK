@@ -24,7 +24,7 @@ final class TicketSearchFormView: BaseView {
     private let arrivalRow = StationRowView(title: "도착", station: "부산")
     private let separator2 = UIView()
     
-    private let dateRow = InfoRowView(image: UIImage(named: "calendar"), content: "11.10 (월) · 14시 이후")
+    private let dateRow = InfoRowView(image: UIImage(named: "calendar"), content: "12.1 (월) · 14시 이후")
     private let separator3 = UIView()
     
     private let passengerRow = InfoRowView(image: UIImage(named: "person"), content: "어른 1명")
