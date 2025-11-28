@@ -19,6 +19,7 @@ struct TrainSearchResponseDTO: ResponseModelType {
 }
 
 struct TrainDTO: Decodable {
+    let trainId: Int
     let type: String
     let trainNumber: String
     let startAt: String
@@ -30,6 +31,7 @@ struct TrainDTO: Decodable {
     let premiumSeatPrice: Int?
     
     enum CodingKeys: String, CodingKey {
+        case trainId
         case type
         case trainNumber = "trailNumber"
         case startAt
@@ -65,6 +67,7 @@ extension TrainSearchResponseDTO {
 extension TrainDTO {
     func toDomain() -> TrainSchedule {
         TrainSchedule(
+            trainId: trainId,
             type: TrainNameType(rawValue: type),
             trailNumber: trainNumber,
             startAt: startAt,
@@ -73,8 +76,7 @@ extension TrainDTO {
             normalSeatStatus: SeatStatus(serverValue: normalSeatStatus),
             premiumSeatStatus: SeatStatus(serverValue: premiumSeatStatus),
             normalSeatPrice: normalSeatPrice,
-            premiumSeatPrice: premiumSeatPrice,
-            
+            premiumSeatPrice: premiumSeatPrice
         )
     }
 }

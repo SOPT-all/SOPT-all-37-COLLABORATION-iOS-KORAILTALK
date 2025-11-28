@@ -22,6 +22,7 @@ final class ReservationListView: BaseView {
     private var trainSchedules: [TrainSchedule] = []
     
     var onSelectSchedule: ((TrainSchedule) -> Void)?
+    var onReachBottom: (() -> Void)?
     
     //MARK: - SetUI
     
@@ -32,7 +33,6 @@ final class ReservationListView: BaseView {
     //MARK: - SetStyle
     
     override func setStyle() {
-        
         collectionViewlayout.do {
             $0.scrollDirection = .vertical
         }
@@ -92,6 +92,17 @@ extension ReservationListView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let schedule = trainSchedules[indexPath.row]
         onSelectSchedule?(schedule)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+        let threshold: CGFloat = 200
+        
+        if contentHeight > 0, offsetY > contentHeight - height - threshold {
+            onReachBottom?()
+        }
     }
 }
 

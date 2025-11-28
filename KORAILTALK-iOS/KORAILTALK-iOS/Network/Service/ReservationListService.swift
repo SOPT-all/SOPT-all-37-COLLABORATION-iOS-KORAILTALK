@@ -36,7 +36,7 @@ final class ReservationListService: BaseService<ReservationListTargetType>, Rese
                 trainType: trainType,
                 seatType: seatType,
                 isBookAvailable: isBookAvailable,
-                cursor: cursor
+                cursor: "2025-12-01T14:00"
             )
         )
 
