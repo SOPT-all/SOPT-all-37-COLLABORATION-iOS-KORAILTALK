@@ -31,15 +31,21 @@ final class ReservationViewController: BaseViewController {
     private var dimmedView: UIView?
     private var reservationModalView: ReservationModal?
     
-    private enum SeatFilter {
+    private enum SeatFilter: String {
         case all
         case normal
         case premium
     }
     
     private var selectedTag: TrainTagType = .all
-    private var allSchedules: [TrainSchedule] = TrainSchedule.mockData
-    private var seatFilter: SeatFilter = .all
+    private var allSchedules: [TrainSchedule] = []
+    private var seatFilter: SeatFilter = .all {
+        didSet {
+            getResrvationOptinList()
+        }
+    }
+    private let reservationService: ReservationListService = ReservationListService()
+    
     
     private var origin: String = "서울"
     private var destination: String = "부산"
@@ -47,6 +53,7 @@ final class ReservationViewController: BaseViewController {
     //MARK: - SetView
     
     override func setView() {
+        getReservationListAll()
         createButtons()
         setUI()
         setStyle()
@@ -241,6 +248,7 @@ final class ReservationViewController: BaseViewController {
     
     @objc private func didTapTag(_ sender: TrainTagButton) {
         selectedTag = sender.type
+        getResrvationOptinList()
         updateTagSelection()
         applyFilter()
     }
@@ -252,24 +260,8 @@ final class ReservationViewController: BaseViewController {
     }
     
     private func applyFilter() {
-        var filtered = allSchedules
-        
-        if selectedTag != .all {
-            filtered = filtered.filter { $0.type.rawValue == selectedTag.rawValue }
-        }
-        
-        switch seatFilter {
-        case .all:
-            break
-        case .normal:
-            filtered = filtered.filter { $0.normalSeatStatus != .soldOut }
-        case .premium:
-            filtered = filtered.filter {
-                guard let status = $0.premiumSeatStatus else { return false }
-                return status != .soldOut
-            }
-        }
-        
+        let filtered = allSchedules
+
         reservationListView.setTrainSchedule(filtered)
         resultLabel.text = "결과(\(filtered.count))"
         
@@ -292,8 +284,7 @@ final class ReservationViewController: BaseViewController {
         
         tagScrollView.setContentOffset(.zero, animated: false)
         
-        allSchedules = TrainSchedule.mockData
-        applyFilter()
+        getReservationListAll()
     }
     
     private func reloadTrainList() {
@@ -319,13 +310,21 @@ final class ReservationViewController: BaseViewController {
         }
         
         let timeText = "\(schedule.startAt) - \(schedule.arriveAt)"
+        var normalPrice = ""
+        var premiumPrice = ""
+        if let normalSeatPrice = schedule.normalSeatPrice {
+            normalPrice = String(describing: normalSeatPrice)
+        }
         
+        if let premiumSeatPrice = schedule.premiumSeatPrice {
+            premiumPrice = String(describing:premiumSeatPrice)
+        }
         let modal = ReservationModal(
             time: timeText,
             trainNameType: schedule.type,
             trainNumber: schedule.trailNumber,
-            generalPrice: "48,800원",
-            specialPrice: "83,700원"
+            generalPrice: normalPrice,
+            specialPrice: premiumPrice
         )
         
         modal.onTapReserve = { [weak self] in
@@ -388,6 +387,47 @@ final class ReservationViewController: BaseViewController {
             return "매진"
         }
         return status.title
+    }
+    
+    // MARK: - Network
+    
+    private func getReservationListAll() {
+        Task {
+            do {
+                let schedules = try await reservationService.getReservationList(origin: origin, destination: destination)
+                await MainActor.run {
+                    allSchedules = schedules.trainList
+                    applyFilter()
+                }
+            } catch {
+                print("RservationViewContrller - all 불러오기 실패")
+            }
+        }
+    }
+    
+    private func getResrvationOptinList() {
+        Task {
+            do {
+                let schedules = try await reservationService.getReservationList(
+                    origin: origin,
+                    destination: destination,
+                    trainType: selectedTag == .all ? nil :  selectedTag.rawValue,
+                    seatType: seatFilter == .all ? nil : seatFilter.rawValue,
+                    isBookAvailable: reservationInfoView.getCheckBoxState(),
+                    cursor: nil
+                )
+                await MainActor.run {
+                    allSchedules = schedules.trainList
+                    applyFilter()
+                }
+            } catch {
+                allSchedules = []
+                applyFilter()
+                print("RservationViewContrller - option  불러오기 실패")
+            }
+            
+        }
+        
     }
 }
 
