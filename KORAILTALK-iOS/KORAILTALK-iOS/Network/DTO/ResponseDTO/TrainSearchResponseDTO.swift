@@ -24,8 +24,10 @@ struct TrainDTO: Decodable {
     let startAt: String
     let arriveAt: String
     let duration: Int
-    let normalSeatStatus: String
-    let premiumSeatStatus: String
+    let normalSeatStatus: String?
+    let premiumSeatStatus: String?
+    let normalSeatPrice: Int?
+    let premiumSeatPrice: Int?
     
     enum CodingKeys: String, CodingKey {
         case type
@@ -35,6 +37,8 @@ struct TrainDTO: Decodable {
         case duration
         case normalSeatStatus
         case premiumSeatStatus
+        case normalSeatPrice
+        case premiumSeatPrice
     }
 }
 
@@ -67,7 +71,10 @@ extension TrainDTO {
             arriveAt: arriveAt,
             duration: duration,
             normalSeatStatus: SeatStatus(serverValue: normalSeatStatus),
-            premiumSeatStatus: SeatStatus(serverValue: premiumSeatStatus)
+            premiumSeatStatus: SeatStatus(serverValue: premiumSeatStatus),
+            normalSeatPrice: normalSeatPrice,
+            premiumSeatPrice: premiumSeatPrice,
+            
         )
     }
 }

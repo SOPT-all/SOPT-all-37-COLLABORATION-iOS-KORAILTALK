@@ -23,10 +23,10 @@ final class ReservationListService: BaseService<ReservationListTargetType>, Rese
     func getReservationList(
         origin: String,
         destination: String,
-        trainType: String?,
-        seatType: String?,
-        isBookAvailable: Bool?,
-        cursor: String?
+        trainType: String? = nil,
+        seatType: String? = nil,
+        isBookAvailable: Bool? = nil,
+        cursor: String? = nil
     ) async throws -> TrainSearchResult {
         let baseResponse: BaseResponseBody<TrainSearchResponseDTO> =
         try await request(
