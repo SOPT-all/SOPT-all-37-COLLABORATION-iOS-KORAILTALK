@@ -354,7 +354,7 @@ final class ReservationViewController: BaseViewController, ReservationInfoViewDe
             }
             
             let checkoutVC = CheckoutViewController(
-                trainId: 1,
+                trainId: schedule.trainId,
                 seatType: seatType
             )
             self.navigationController?.pushViewController(checkoutVC, animated: true)

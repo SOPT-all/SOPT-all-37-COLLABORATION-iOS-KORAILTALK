@@ -8,6 +8,7 @@
 import Foundation
 
 struct TrainSchedule {
+    let trainId: Int
     let type: TrainNameType
     let trailNumber: String
     let startAt: String
