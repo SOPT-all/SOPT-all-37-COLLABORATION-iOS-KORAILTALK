@@ -10,7 +10,13 @@ import UIKit
 import SnapKit
 import Then
 
-final class ReservationInfoView: BaseView {
+protocol ReservationInfoViewDeletegate: AnyObject {
+    func didTabCheckBox()
+}
+
+final class ReservationInfoView: BaseView,CheckBoxDelegate {
+   
+    
     
     //MARK: - UI
     
@@ -33,6 +39,8 @@ final class ReservationInfoView: BaseView {
     
     private var originText: String?
     private var destinationText: String?
+    
+    weak var delegate: ReservationInfoViewDeletegate?
     
     //MARK: - SetUI
     
@@ -109,6 +117,10 @@ final class ReservationInfoView: BaseView {
             $0.spacing = 11
         }
         
+        checkBox.do {
+            $0.delegate = self
+        }
+        
         checkBoxLabel.do {
             $0.text = "예약가능"
             $0.font = .body2_m_15
@@ -160,6 +172,10 @@ final class ReservationInfoView: BaseView {
     
     func getCheckBoxState() -> Bool {
         return checkBox.isChecked
+    }
+    func didTapCheckBox() {
+        delegate?.didTabCheckBox()
+        
     }
 }
 

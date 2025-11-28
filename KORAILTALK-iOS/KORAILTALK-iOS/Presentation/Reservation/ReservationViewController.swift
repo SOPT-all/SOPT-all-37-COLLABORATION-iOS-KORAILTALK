@@ -10,7 +10,9 @@ import UIKit
 import SnapKit
 import Then
 
-final class ReservationViewController: BaseViewController {
+final class ReservationViewController: BaseViewController, ReservationInfoViewDeletegate {
+
+    
     
     //MARK: - UI
     
@@ -85,6 +87,7 @@ final class ReservationViewController: BaseViewController {
     private func setStyle() {
         navBarBackgroundView.backgroundColor = .primary700
         reservationInfoView.backgroundColor = .mainWhite
+        reservationInfoView.delegate = self
         
         tagStackView.do {
             $0.axis = .horizontal
@@ -229,6 +232,9 @@ final class ReservationViewController: BaseViewController {
     }
     
     //MARK: - Public
+    func didTabCheckBox() {
+        getResrvationOptinList()
+    }
     
     func configure(origin: String, destination: String) {
         self.origin = origin
