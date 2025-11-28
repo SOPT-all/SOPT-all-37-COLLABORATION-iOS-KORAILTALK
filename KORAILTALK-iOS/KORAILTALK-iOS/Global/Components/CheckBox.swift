@@ -4,14 +4,23 @@
 //
 //  Created by sumin Kong on 11/19/25.
 //
+
 import UIKit
+
+protocol CheckBoxDelegate: AnyObject {
+    func didTapCheckBox()
+}
 
 final class CheckBox: UIButton {
     var checkedImage = UIImage(named: "checkbox_on")
     var uncheckedImage = UIImage(named: "checkbox_off")
     
-    var isChecked: Bool = false {
+    weak var delegate: CheckBoxDelegate?
+    
+    var isChecked: Bool = false
+    {
         didSet {
+            delegate?.didTapCheckBox()
             updateImage()
         }
     }

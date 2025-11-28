@@ -16,7 +16,7 @@ enum SeatStatus: String, CaseIterable {
     var title: String {
         switch self {
         case .available:
-            return "예약가능"
+            return "예매가능"
         case .almostSoldOut:
             return "매진임박"
         case .soldOut:
@@ -35,16 +35,16 @@ enum SeatStatus: String, CaseIterable {
         }
     }
     
-    init(serverValue: String) {
+    init?(serverValue: String?) {
         switch serverValue {
-        case "예약가능":
+        case "예매 가능":
             self = .available
-        case "매진임박":
+        case "매진 임박":
             self = .almostSoldOut
         case "매진" :
             self = .soldOut
         default:
-            self = .soldOut
+            return nil
         }
     }
 }
