@@ -239,12 +239,11 @@ extension ReservationDropdownView: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath) {
+        let value = items[indexPath.row]
+        onSelect?(value)
         selectedIndex = indexPath.row
         didselectedItem(index: indexPath.row)
         tableView.reloadData()
-        
-        let value = items[indexPath.row]
-        onSelect?(value)
     }
 }
 

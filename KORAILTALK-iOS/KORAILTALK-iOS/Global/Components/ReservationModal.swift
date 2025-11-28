@@ -176,6 +176,15 @@ final class ReservationModal: BaseView {
         specialSeatView.isSelected = false
         specialSeatView.isDisabled = false
         updateReservationButtonState()
+        
+        if generalPrice.isEmpty {
+            generalSeatView.isDisabled = true
+        }
+        
+        if specialPrice.isEmpty {
+            specialSeatView.isDisabled = true
+        }
+        
     }
     
     private func updateReservationButtonState() {

@@ -148,32 +148,41 @@ final class ReservationListCell: UICollectionViewCell,ReuseIdentifiable {
     
     func configure(schedule: TrainSchedule) {
         
-        let isEmptySeat = schedule.normalSeatStatus == .soldOut && schedule.premiumSeatStatus == .soldOut
-        
+        let isEmptySeat =
+        (schedule.normalSeatStatus == nil || schedule.normalSeatStatus == .soldOut)
+        &&
+        (schedule.premiumSeatStatus == nil || schedule.premiumSeatStatus == .soldOut)
         
         traininfoView.configure(trainName: schedule.type, trainNumber: schedule.trailNumber, isDisabled: isEmptySeat)
+        
         if isEmptySeat {
             layer.backgroundColor = UIColor.gray100.cgColor
         }
-        
-        if let normalStatus = schedule.normalSeatStatus,
-           normalStatus != .soldOut {
-            normalSeatStatus.isHidden = false
-            normalSeatStatus.configure(
-                seatType: .normal,
-                seatStatus: normalStatus
-            )
+        if let normalSeat = schedule.normalSeatStatus {
+            if schedule.normalSeatStatus != .soldOut {
+                normalSeatStatus.isHidden = false
+                normalSeatStatus.configure(
+                    seatType: .normal,
+                    seatStatus: normalSeat
+                )
+            } else {
+                normalSeatStatus.isHidden = true
+            }
         } else {
             normalSeatStatus.isHidden = true
         }
-
-        if let premiumStatus = schedule.premiumSeatStatus,
-           premiumStatus != .soldOut {
-            premiumSeatStatus.isHidden = false
-            premiumSeatStatus.configure(
-                seatType: .premium,
-                seatStatus: premiumStatus
-            )
+        
+        
+        if let premiumSeat = schedule.premiumSeatStatus {
+            if  schedule.premiumSeatStatus != .soldOut {
+                premiumSeatStatus.isHidden = false
+                premiumSeatStatus.configure(
+                    seatType: .premium,
+                    seatStatus:  premiumSeat
+                )
+            } else {
+                premiumSeatStatus.isHidden = true
+            }
         } else {
             premiumSeatStatus.isHidden = true
         }
