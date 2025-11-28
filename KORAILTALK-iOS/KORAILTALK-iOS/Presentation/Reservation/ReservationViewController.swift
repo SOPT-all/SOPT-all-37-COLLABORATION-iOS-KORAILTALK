@@ -157,10 +157,15 @@ final class ReservationViewController: BaseViewController {
             $0.centerY.equalToSuperview()
         }
         
+        seatDropdown.snp.makeConstraints{
+            $0.width.equalTo(94)
+        }
+        
         dropdownStackView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
             $0.top.equalTo(tagScrollView.snp.bottom).offset(16)
             $0.trailing.lessThanOrEqualTo(resultLabel.snp.leading)
+            $0.bottom.equalToSuperview()
         }
         
         resultLabel.snp.makeConstraints {
