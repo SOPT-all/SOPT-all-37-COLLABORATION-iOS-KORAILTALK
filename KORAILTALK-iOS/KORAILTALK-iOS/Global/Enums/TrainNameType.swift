@@ -29,7 +29,7 @@ enum TrainNameType: String, CaseIterable {
         case .itxMaeum:
             return "ITX-마음"
         case .mugunghwa:
-            return "무궁화호"
+            return "무궁화"
         }
     }
     
