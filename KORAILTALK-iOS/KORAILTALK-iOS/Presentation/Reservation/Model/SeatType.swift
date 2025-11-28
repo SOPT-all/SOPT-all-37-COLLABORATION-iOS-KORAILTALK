@@ -43,8 +43,6 @@ enum SeatStatus: String, CaseIterable {
             self = .almostSoldOut
         case "매진" :
             self = .soldOut
-        case nil:
-            return nil
         default:
             return nil
         }
