@@ -414,17 +414,79 @@ final class ReservationViewController: BaseViewController, ReservationInfoViewDe
     private func getResrvationOptinList() {
         Task {
             do {
-                let schedules = try await reservationService.getReservationList(
-                    origin: origin,
-                    destination: destination,
-                    trainType: selectedTag == .all ? nil :  selectedTag.rawValue,
-                    seatType: seatFilter == .all ? nil : seatFilter.rawValue,
-                    isBookAvailable: reservationInfoView.getCheckBoxState(),
-                    cursor: nil
-                )
-                await MainActor.run {
-                    allSchedules = schedules.trainList
-                    applyFilter()
+                
+                if selectedTag == .ktx {
+                    let ktxSchedules = try await reservationService.getReservationList(
+                        origin: origin,
+                        destination: destination,
+                        trainType: "KTX",
+                        seatType: seatFilter == .all ? nil : seatFilter.rawValue,
+                        isBookAvailable: reservationInfoView.getCheckBoxState(),
+                        cursor: nil
+                    )
+                    
+                    let ktxSancheonSchedules = try await reservationService.getReservationList(
+                        origin: origin,
+                        destination: destination,
+                        trainType: "KTX-S",
+                        seatType: seatFilter == .all ? nil : seatFilter.rawValue,
+                        isBookAvailable: reservationInfoView.getCheckBoxState(),
+                        cursor: nil
+                    )
+                    
+                    let ktxCheongryongSchedules = try await reservationService.getReservationList(
+                        origin: origin,
+                        destination: destination,
+                        trainType: "KTX-C",
+                        seatType: seatFilter == .all ? nil : seatFilter.rawValue,
+                        isBookAvailable: reservationInfoView.getCheckBoxState(),
+                        cursor: nil
+                    )
+                    await MainActor.run {
+                        allSchedules = ktxSchedules.trainList + ktxSancheonSchedules.trainList + ktxCheongryongSchedules.trainList
+                        allSchedules = allSchedules.sorted {
+                            $0.startAt < $1.startAt
+                        }
+                        applyFilter()
+                    }
+                } else if selectedTag == .itxMaeumSeamaeul {
+                    let itxMeaumSchedules = try await reservationService.getReservationList(
+                        origin: origin,
+                        destination: destination,
+                        trainType: "ITX-M",
+                        seatType: seatFilter == .all ? nil : seatFilter.rawValue,
+                        isBookAvailable: reservationInfoView.getCheckBoxState(),
+                        cursor: nil
+                    )
+                    
+                    let itxSeamaeulSchedules = try await reservationService.getReservationList(
+                        origin: origin,
+                        destination: destination,
+                        trainType: "ITX-N",
+                        seatType: seatFilter == .all ? nil : seatFilter.rawValue,
+                        isBookAvailable: reservationInfoView.getCheckBoxState(),
+                        cursor: nil
+                    )
+                    await MainActor.run {
+                        allSchedules = itxMeaumSchedules.trainList + itxSeamaeulSchedules.trainList
+                        allSchedules = allSchedules.sorted {
+                            $0.startAt < $1.startAt
+                        }
+                        applyFilter()
+                    }
+                } else {
+                    let schedules = try await reservationService.getReservationList(
+                        origin: origin,
+                        destination: destination,
+                        trainType: selectedTag == .all ? nil :  selectedTag.rawValue,
+                        seatType: seatFilter == .all ? nil : seatFilter.rawValue,
+                        isBookAvailable: reservationInfoView.getCheckBoxState(),
+                        cursor: nil
+                    )
+                    await MainActor.run {
+                        allSchedules = schedules.trainList
+                        applyFilter()
+                    }
                 }
             } catch {
                 allSchedules = []
