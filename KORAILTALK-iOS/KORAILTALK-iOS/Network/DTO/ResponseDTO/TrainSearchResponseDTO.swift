@@ -73,8 +73,7 @@ extension TrainDTO {
             normalSeatStatus: SeatStatus(serverValue: normalSeatStatus),
             premiumSeatStatus: SeatStatus(serverValue: premiumSeatStatus),
             normalSeatPrice: normalSeatPrice,
-            premiumSeatPrice: premiumSeatPrice,
-            
+            premiumSeatPrice: premiumSeatPrice
         )
     }
 }

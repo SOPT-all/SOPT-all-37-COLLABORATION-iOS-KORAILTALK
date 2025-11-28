@@ -20,6 +20,9 @@ final class ReservationModal: BaseView {
     private let generalPrice: String
     private let specialPrice: String
     
+    private let hasNormal: Bool
+    private let hasPremium: Bool
+    
     enum SeatOption {
         case normal
         case premium
@@ -70,7 +73,7 @@ final class ReservationModal: BaseView {
         $0.spacing = 12
         $0.distribution = .fillEqually
     }
-
+    
     // MARK: - Init
     
     init(
@@ -78,13 +81,18 @@ final class ReservationModal: BaseView {
         trainNameType: TrainNameType,
         trainNumber: String,
         generalPrice: String,
-        specialPrice: String
+        specialPrice: String,
+        hasNormal: Bool,
+        hasPremium: Bool
     ) {
         self.time = time
         self.trainNameType = trainNameType
         self.trainNumber = trainNumber
         self.generalPrice = generalPrice
         self.specialPrice = specialPrice
+        self.hasNormal = hasNormal
+        self.hasPremium = hasPremium
+        
         super.init(frame: .zero)
         
         backgroundColor = .clear
@@ -95,18 +103,17 @@ final class ReservationModal: BaseView {
         setupButtonActions()
         resetSeatSelection()
     }
-       
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-       
+    
     // MARK: - Layout
     
     private func setupLayout() {
         addSubview(containerView)
         containerView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(300)
         }
         
         containerView.addSubview(handleView)
@@ -136,20 +143,26 @@ final class ReservationModal: BaseView {
             $0.height.equalTo(45)
         }
         
-        containerView.addSubview(specialSeatView)
-        specialSeatView.snp.makeConstraints {
-            $0.top.equalTo(generalSeatView.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(45)
+        if hasPremium {
+            containerView.addSubview(specialSeatView)
+            specialSeatView.snp.makeConstraints {
+                $0.top.equalTo(generalSeatView.snp.bottom).offset(12)
+                $0.leading.trailing.equalToSuperview().inset(16)
+                $0.height.equalTo(45)
+            }
         }
         
         buttonStack.addArrangedSubviews(selectSeatButton, reservationButton)
-        
         containerView.addSubview(buttonStack)
         buttonStack.snp.makeConstraints {
-            $0.top.equalTo(specialSeatView.snp.bottom).offset(12)
+            if hasPremium {
+                $0.top.equalTo(specialSeatView.snp.bottom).offset(12)
+            } else {
+                $0.top.equalTo(generalSeatView.snp.bottom).offset(12)
+            }
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(48)
+            $0.bottom.equalToSuperview().inset(30)
         }
     }
     
@@ -172,26 +185,19 @@ final class ReservationModal: BaseView {
     
     private func resetSeatSelection() {
         generalSeatView.isSelected = false
-        generalSeatView.isDisabled = false
         specialSeatView.isSelected = false
-        specialSeatView.isDisabled = false
+        
+        generalSeatView.isDisabled = !hasNormal
+        specialSeatView.isDisabled = !hasPremium
+        
         updateReservationButtonState()
-        
-        if generalPrice.isEmpty {
-            generalSeatView.isDisabled = true
-        }
-        
-        if specialPrice.isEmpty {
-            specialSeatView.isDisabled = true
-        }
-        
     }
     
     private func updateReservationButtonState() {
         let hasSelection = generalSeatView.isSelected || specialSeatView.isSelected
         reservationButton.isEnabled = hasSelection
     }
-
+    
     // MARK: - SeatButton toggle
     
     @objc private func selectGeneralSeat() {
@@ -202,14 +208,13 @@ final class ReservationModal: BaseView {
         } else {
             generalSeatView.isSelected = true
             generalSeatView.isDisabled = false
-            
             specialSeatView.isSelected = false
             specialSeatView.isDisabled = true
         }
         
         updateReservationButtonState()
     }
-
+    
     @objc private func selectSpecialSeat() {
         guard !specialSeatView.isDisabled else { return }
         
@@ -218,7 +223,6 @@ final class ReservationModal: BaseView {
         } else {
             specialSeatView.isSelected = true
             specialSeatView.isDisabled = false
-            
             generalSeatView.isSelected = false
             generalSeatView.isDisabled = true
         }
@@ -231,7 +235,6 @@ final class ReservationModal: BaseView {
             onTapReserve?(.normal)
         } else if specialSeatView.isSelected {
             onTapReserve?(.premium)
-        } else {
         }
     }
 }
